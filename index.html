@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Универсальные исполнители · Рабочий лист · 11 класс</title>
+<style>
+  :root{
+    --bg-soft:#f5f5f7; --bg-elev:#ffffff;
+    --text:#1d1d1f; --text-soft:#515154; --text-muted:#86868b;
+    --border:#e5e5e7; --border-strong:#d2d2d7;
+    --accent:#0071e3; --accent-soft:#e8f1fc; --accent-hover:#0077ed;
+    --success:#1b8a4a; --success-soft:#e6f5ec;
+    --error:#c5221f; --error-soft:#fde7e6;
+    --warn:#b25e09; --warn-soft:#fcf1e2;
+    --radius:14px; --radius-lg:18px;
+    --shadow-sm:0 1px 2px rgba(0,0,0,.04),0 1px 3px rgba(0,0,0,.03);
+    --shadow:0 2px 8px rgba(0,0,0,.04),0 8px 24px rgba(0,0,0,.05);
+    --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,system-ui,sans-serif;
+    --mono:"SF Mono",Menlo,Consolas,"Courier New",monospace;
+    /* палитра «редактора кода» */
+    --cw-bg:#161617; --cw-bg2:#1d1d1f; --cw-border:#2c2c2e; --cw-border2:#3a3a3c;
+    --cw-text:#f5f5f7; --cw-muted:#98989d;
+    --tk-com:#7f7f86; --tk-st:#c678dd; --tk-sym:#e5c07b; --tk-dir:#ff7ab2; --tk-num:#d19a66;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{font-family:var(--font);background:var(--bg-soft);color:var(--text);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;min-height:100vh}
+  #app{max-width:780px;margin:0 auto;padding:24px 16px 80px}
+
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:15px;min-width:0}
+  .brand-dot{width:10px;height:10px;border-radius:50%;background:var(--accent);flex-shrink:0}
+  .brand-meta{font-size:12px;color:var(--text-muted);font-weight:400;margin-top:1px}
+  .progress-pill{font-size:13px;color:var(--text-muted);padding:6px 12px;background:var(--bg-elev);border:1px solid var(--border);border-radius:999px;white-space:nowrap}
+
+  .sheet-tabs{display:flex;gap:6px;margin-bottom:20px;background:var(--bg-elev);padding:6px;border-radius:14px;border:1px solid var(--border);overflow-x:auto}
+  .sheet-tab{flex:1;min-height:44px;min-width:max-content;padding:0 12px;border-radius:10px;border:none;background:transparent;font-family:var(--font);font-size:13px;font-weight:500;color:var(--text-soft);cursor:pointer;transition:background .15s,color .15s;white-space:nowrap}
+  .sheet-tab.active{background:var(--accent);color:#fff}
+  .sheet-tab:not(.active):hover{background:var(--bg-soft)}
+  .tab-score{display:inline-block;margin-left:5px;padding:1px 6px;background:var(--accent-soft);color:var(--accent);border-radius:6px;font-size:11px}
+  .sheet-tab.active .tab-score{background:rgba(255,255,255,.22);color:#fff}
+
+  .card{background:var(--bg-elev);border:1px solid var(--border);border-radius:var(--radius-lg);padding:26px 24px;box-shadow:var(--shadow-sm);margin-bottom:16px}
+  .card h1{font-size:28px;line-height:1.2;margin:0 0 8px;letter-spacing:-.02em;font-weight:700}
+  .card h2{font-size:21px;line-height:1.25;margin:0 0 10px;letter-spacing:-.01em;font-weight:700}
+  .card h3{font-size:17px;margin:18px 0 8px;font-weight:600}
+  .card p{margin:0 0 10px}
+  p.muted,.muted{color:var(--text-soft);font-size:14px}
+  code{background:var(--bg-soft);padding:2px 6px;border-radius:6px;font-size:.93em;font-family:var(--mono)}
+
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 18px;border-radius:12px;font-size:15px;font-weight:500;font-family:var(--font);border:1px solid transparent;cursor:pointer;transition:background .15s,transform .05s;text-decoration:none}
+  .btn:active{transform:translateY(1px)}
+  .btn:focus-visible{outline:3px solid var(--accent-soft);outline-offset:2px}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .btn-primary{background:var(--accent);color:#fff}
+  .btn-primary:hover:not(:disabled){background:var(--accent-hover)}
+  .btn-secondary{background:var(--bg-elev);color:var(--text);border-color:var(--border-strong)}
+  .btn-secondary:hover:not(:disabled){background:var(--bg-soft)}
+  .btn-sm{min-height:44px;padding:0 12px;font-size:13px;border-radius:10px}
+  .btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+
+  .start-hero{text-align:center;padding:16px 8px 8px}
+  .start-hero h1{font-size:30px;letter-spacing:-.02em}
+  .start-meta{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:16px 0 22px}
+  .meta-chip{background:var(--bg-soft);border:1px solid var(--border);padding:6px 12px;border-radius:999px;font-size:13px;color:var(--text-soft)}
+  .plan-list{list-style:none;padding:0;margin:0 0 8px}
+  .plan-list li{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);align-items:flex-start}
+  .plan-list li:last-child{border-bottom:none}
+  .plan-num{width:28px;height:28px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-weight:600;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .plan-text{flex:1;font-size:15px;padding-top:3px}
+  .plan-text small{display:block;color:var(--text-muted);font-size:13px;margin-top:2px}
+
+  .theory-block{background:var(--bg-elev);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px 22px;margin-bottom:14px;box-shadow:var(--shadow-sm)}
+  .theory-block h3{margin:0 0 12px;font-size:18px;font-weight:600}
+  .theory-block ul,.theory-block ol{margin:0 0 12px;padding-left:22px}
+  .theory-block li{margin-bottom:6px}
+  .theory-block .task{background:var(--bg-soft);box-shadow:none}
+  .note{background:var(--bg-soft);border-left:3px solid var(--accent);padding:12px 14px;border-radius:10px;margin:12px 0;font-size:15px}
+  .note strong{color:var(--accent)}
+  .progress-bar{height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-bottom:20px}
+  .progress-fill{height:100%;background:var(--accent);transition:width .3s;border-radius:3px}
+
+  /* ---------- «окно редактора кода» ---------- */
+  .code-window{background:var(--cw-bg);border:1px solid var(--cw-border);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);margin:12px 0}
+  .code-titlebar{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--cw-bg2);border-bottom:1px solid var(--cw-border)}
+  .dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+  .dot.r{background:#ff5f57}.dot.y{background:#febc2e}.dot.g{background:#28c840}
+  .code-filename{margin-left:6px;font-family:var(--mono);font-size:12px;color:var(--cw-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .code-body{padding:14px}
+  .code-body pre{margin:0;background:transparent;color:var(--cw-text);font-family:var(--mono);font-size:13px;line-height:1.75;overflow-x:auto;white-space:pre}
+  .tk-com{color:var(--tk-com);font-style:italic}
+  .tk-st{color:var(--tk-st)}
+  .tk-sym{color:var(--tk-sym)}
+  .tk-dir{color:var(--tk-dir);font-weight:600}
+  .tk-num{color:var(--tk-num)}
+  textarea.program{width:100%;min-height:130px;font-family:var(--mono);font-size:13px;line-height:1.7;padding:10px 12px;border:1px solid var(--cw-border2);border-radius:10px;background:var(--cw-bg2);color:var(--cw-text);resize:vertical;caret-color:#64d2ff}
+  textarea.program:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,113,227,.35)}
+  .code-body .text-input{background:var(--cw-bg2);border:1px solid var(--cw-border2);color:var(--cw-text)}
+  .code-body .text-input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,113,227,.35)}
+  .emu-label{display:block;font-size:12px;font-weight:600;color:var(--cw-muted);margin:12px 0 6px;text-transform:uppercase;letter-spacing:.05em}
+  .emu-controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+  .emu-status{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 6px}
+  .status-chip{font-size:12px;padding:4px 10px;border-radius:999px;background:var(--cw-bg2);border:1px solid var(--cw-border2);color:var(--cw-muted)}
+  .status-chip strong{color:var(--cw-text)}
+  .status-chip.ok{color:#32d74b;border-color:rgba(40,200,64,.45);background:rgba(40,200,64,.12)}
+  .status-chip.err{color:#ff6961;border-color:rgba(255,69,58,.45);background:rgba(255,69,58,.12)}
+  .tape-wrap{overflow-x:auto;padding:4px 0 8px}
+  .tape{display:flex;gap:4px;min-width:min-content}
+  .tape-col{display:flex;flex-direction:column;align-items:center;min-width:40px}
+  .head-mark{height:16px;font-size:11px;color:#64d2ff;line-height:16px}
+  .tape-cell{width:40px;height:46px;border:1px solid var(--cw-border2);border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:18px;background:var(--cw-bg2);color:var(--cw-text)}
+  .tape-cell.head{border-color:var(--accent);background:rgba(0,113,227,.28);box-shadow:0 0 0 2px rgba(0,113,227,.4)}
+  .tape-cell.blank{color:#5a5a5e}
+  .markov-word{font-family:var(--mono);font-size:22px;letter-spacing:2px;background:var(--cw-bg2);border:1px solid var(--cw-border2);border-radius:12px;padding:14px 12px;text-align:center;word-break:break-all;margin:12px 0;color:var(--cw-text)}
+  .markov-word .muted{color:var(--cw-muted)}
+  .logbox{background:var(--cw-bg2);border:1px solid var(--cw-border2);border-radius:10px;padding:10px 12px;font-size:12.5px;font-family:var(--mono);max-height:170px;overflow-y:auto;margin-top:10px;color:var(--cw-muted)}
+  .logline{padding:2px 0;word-break:break-all}
+
+  details.refcard summary{cursor:pointer;font-weight:600;font-size:15px;min-height:32px}
+  details.refcard[open] summary{margin-bottom:10px}
+  details.refcard ul{margin:8px 0 12px;padding-left:22px}
+  details.refcard li{margin-bottom:5px;font-size:14px}
+
+  .section-title{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);font-weight:600;margin:26px 0 12px}
+
+  .task{background:var(--bg-elev);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;margin-bottom:14px;box-shadow:var(--shadow-sm);transition:border-color .2s,background .2s}
+  .task.correct{border-color:var(--success);background:var(--success-soft)}
+  .task.incorrect{border-color:var(--error);background:var(--error-soft)}
+  .task-top{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+  .task-num{font-size:13px;color:var(--text-muted);font-weight:600}
+  .task-meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+  .task-points{font-size:12px;color:var(--text-muted);background:var(--bg-soft);padding:4px 10px;border-radius:999px;white-space:nowrap}
+  .badge-solved{font-size:12px;color:var(--success);background:var(--success-soft);border:1px solid #bfe3cd;padding:4px 10px;border-radius:999px;white-space:nowrap}
+  .badge-hint{font-size:12px;color:var(--warn);background:var(--warn-soft);border:1px solid #ecd0ab;padding:4px 10px;border-radius:999px;white-space:nowrap}
+  .task-question{font-size:15.5px;margin-bottom:12px;line-height:1.5}
+  .tests-list{font-size:13px;color:var(--text-soft);background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:8px 12px;margin:10px 0}
+  .answer-row{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+  .answer-row .text-input{flex:1;min-width:180px}
+  .text-input{width:100%;min-height:44px;padding:10px 14px;border:1px solid var(--border);border-radius:12px;font-family:var(--font);font-size:15px;background:var(--bg-elev);color:var(--text)}
+  .text-input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+  .hint-btn{background:transparent;border:1px solid var(--border-strong);color:var(--text-soft);min-height:44px;padding:0 12px;border-radius:10px;font-size:13px;font-family:var(--font);cursor:pointer}
+  .hint-btn:hover{background:var(--bg-soft)}
+  .giveup-btn{margin-left:auto;background:transparent;border:1px dashed var(--border-strong);color:var(--text-muted);min-height:44px;padding:0 14px;border-radius:10px;font-size:13px;font-family:var(--font);cursor:pointer}
+  .giveup-btn:hover{color:var(--error);border-color:var(--error);background:var(--error-soft)}
+  .hint-box{background:var(--accent-soft);border-left:3px solid var(--accent);padding:10px 14px;border-radius:10px;margin:10px 0;font-size:14px;color:#0a5cb8}
+  .options{display:flex;flex-direction:column;gap:8px}
+  .option{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--border);border-radius:12px;cursor:pointer;transition:background .15s,border-color .15s;background:var(--bg-elev);min-height:44px}
+  .option:hover{background:var(--bg-soft)}
+  .option input{width:18px;height:18px;accent-color:var(--accent);cursor:pointer;flex-shrink:0}
+  .option span{flex:1;font-size:15px}
+  .option.selected{border-color:var(--accent);background:var(--accent-soft)}
+  .feedback{margin-top:12px;padding:10px 14px;border-radius:10px;font-size:14px}
+  .feedback.ok{background:var(--success-soft);color:var(--success)}
+  .feedback.err{background:var(--error-soft);color:var(--error)}
+  .feedback.warn{background:var(--warn-soft);color:var(--warn)}
+
+  .results-card{background:var(--bg-elev);border:1px solid var(--border);border-radius:var(--radius-lg);padding:30px 24px;text-align:center;box-shadow:var(--shadow)}
+  .score-circle{width:140px;height:140px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#00a3ff);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 18px;box-shadow:0 8px 24px rgba(0,113,227,.25)}
+  .score-value{font-size:40px;font-weight:700;line-height:1;letter-spacing:-.02em}
+  .score-label{font-size:13px;opacity:.9;margin-top:4px}
+  .grade-text{font-size:20px;font-weight:600;margin-bottom:6px}
+  .grade-desc{color:var(--text-soft);font-size:15px;margin-bottom:18px}
+  .summary-row{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg-soft);border-radius:10px;margin-bottom:8px;font-size:14px;text-align:left;gap:8px}
+  .summary-row strong{color:var(--accent);white-space:nowrap}
+  details.report{text-align:left;background:var(--bg-elev);border:1px solid var(--border);border-radius:12px;padding:12px 16px;margin-bottom:10px}
+  details.report summary{cursor:pointer;font-weight:600;font-size:14px;min-height:32px}
+  .report-line{display:flex;gap:8px;align-items:baseline;font-size:13.5px;padding:6px 0;border-bottom:1px solid var(--border);flex-wrap:wrap}
+  .report-line:last-child{border-bottom:none}
+  .r-ok{color:var(--success);font-weight:600}
+  .r-err{color:var(--error);font-weight:600}
+  .r-none{color:var(--text-muted)}
+  .r-note{color:var(--text-muted);font-size:12px}
+
+  .print-only{display:none}
+  .print-table{width:100%;border-collapse:collapse;font-size:11.5px;margin:10px 0}
+  .print-table th,.print-table td{border:1px solid #9a9a9e;padding:4px 6px;text-align:left;vertical-align:top}
+  .print-table th{background:#efeff1}
+
+  .fade-in{animation:fadeIn .3s ease}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+  @media (max-width:480px){
+    #app{padding:16px 10px 60px}
+    .card{padding:20px 16px}
+    .card h1{font-size:23px}
+    .card h2{font-size:18px}
+    .start-hero h1{font-size:25px}
+    .task{padding:16px}
+    .code-body{padding:12px}
+    .score-circle{width:120px;height:120px}
+    .score-value{font-size:34px}
+    .tape-cell{width:36px;height:42px;font-size:16px}
+    .tape-col{min-width:36px}
+  }
+
+  @media print{
+    body{background:#fff}
+    #app{max-width:100%;padding:0}
+    .sheet-tabs,.topbar,.btn-row,.btn,.hint-btn,.giveup-btn,.emu-controls,
+    .code-window,.task,.theory-block,details.report,.summary-row,.score-circle,
+    .grade-text,.grade-desc,.no-print{display:none !important}
+    .results-card{border:none;box-shadow:none;padding:0;border-radius:0}
+    .print-only{display:block !important}
+  }
+</style>
+</head>
+<body>
+<div id="app" role="main"></div>
+<script>
+"use strict";
+/* =========================================================
+   CONSTANTS
+   ========================================================= */
+const TEACHER_NAME = "Масликов Михаил Михайлович";
+const STORE_KEY = "universal_executors_ws_v2";
+const TOTAL_MAX = 50;                 // теория 10 + тест 10 + 3 листа по 10
+const MAX_ATTEMPTS_REVEAL = 3;
+const TM_STEP_LIMIT = 500, POST_STEP_LIMIT = 500, MARKOV_STEP_LIMIT = 200;
+
+/* ---------- ТЕОРИЯ: 10 слайдов + блиц-проверка ---------- */
+const THEORY = [
+  { emoji:"🧭", title:"Универсальные исполнители",
+    content:`
+      <p><strong>Универсальный исполнитель</strong> — учебная модель абстрактной вычислительной машины, на которой можно записать <em>любой</em> алгоритм.</p>
+      <ul>
+        <li>🎞 <strong>машина Тьюринга</strong> — А. Тьюринг, 1936 г.;</li>
+        <li>📼 <strong>машина Поста</strong> — Э. Л. Пост;</li>
+        <li>🔤 <strong>нормальные алгорифмы Маркова</strong> — А. А. Марков, 1940-е гг.</li>
+      </ul>
+      <div class="note"><strong>Зачем?</strong> Эти модели уточняют само понятие «алгоритм» и лежат в основе теории вычислимости: всё, что вообще можно вычислить, вычислимо на любой из них.</div>`,
+    quiz:{id:"th1",kind:"choice",points:1,title:"Блиц-проверка",
+      question:"Что утверждает тезис Тьюринга?",
+      options:["Любой алгоритм может быть записан в виде программы для машины Тьюринга",
+               "Любая программа машины Тьюринга обязательно останавливается",
+               "Машина Тьюринга работает быстрее любых других исполнителей",
+               "Алгоритмы можно записывать только на языках программирования"],
+      correct:0, hint:"Речь о связи понятий «алгоритм» и «программа для машины Тьюринга»."} },
+  { emoji:"🎞", title:"Машина Тьюринга: устройство",
+    content:`
+      <ul>
+        <li><strong>Лента</strong> — бесконечная, разбита на ячейки; в каждой ячейке один символ алфавита A = {a<sub>0</sub>, a<sub>1</sub>, …, a<sub>N</sub>}.</li>
+        <li>Символ «пробел» (пустая ячейка) обозначается a<sub>0</sub>, Λ или <code>_</code>.</li>
+        <li><strong>Каретка</strong> (считывающая и записывающая головка) читает и записывает символы, двигается вдоль ленты.</li>
+        <li>Работой управляет <strong>таблица</strong>: строки — символы алфавита, столбцы — состояния Q = {q<sub>0</sub>, q<sub>1</sub>, …, q<sub>M</sub>}.</li>
+      </ul>
+      <div class="note">Старт — в состоянии <strong>q1</strong>. Состояние <strong>q0 — конечное</strong>: попав в него, автомат заканчивает работу.</div>`,
+    quiz:{id:"th2",kind:"choice",points:1,title:"Блиц-проверка",
+      question:"Какова лента машины Тьюринга?",
+      options:["Бесконечная, разбитая на ячейки, в каждой — символ алфавита",
+               "Конечная, ровно 256 ячеек",
+               "Бесконечная, но хранить можно только цифры",
+               "Это набор регистров процессора"],
+      correct:0, hint:"Ключевое слово — «бесконечная»: лента может расти в обе стороны."} },
+  { emoji:"⚙️", title:"Машина Тьюринга: команда и пример",
+    content:`
+      <p><strong>Команда</strong> в клетке таблицы состоит из трёх частей: 1) символ для записи; 2) направление: <code>&gt;</code> (вправо), <code>&lt;</code> (влево), <code>.</code> (на месте); 3) новое состояние.</p>
+      <p>Пример программы «заменить все a на b»:</p>
+      <pre class="program-display">q1 a b &gt; q1
+q1 b b &gt; q1
+q1 _ _ . q0</pre>
+      <p>Трассировка для <code>abba</code>: q1 над «a» → пишем «b», вправо; над «b» → вправо; над «b» → вправо; над «a» → «b», вправо; над «_» → останов в q0. Итог: <code>bbbb</code>.</p>
+      <div class="note">⚠️ Если для пары (состояние, символ) команды нет — машина останавливается с ошибкой.</div>`,
+    quiz:{id:"th3",kind:"choice",points:1,title:"Блиц-проверка",
+      question:"Из скольких частей состоит команда машины Тьюринга?",
+      options:["Из двух: символ и направление","Из трёх: символ, направление, новое состояние",
+               "Из четырёх: символ, направление, состояние и номер строки","Из одной: только новый символ"],
+      correct:1, hint:"Символ для записи, куда двигаться… и что ещё?"} },
+  { emoji:"📼", title:"Машина Поста: устройство и команды",
+    content:`
+      <p>Машина Поста — каретка + бесконечная лента. В <strong>троичной</strong> машине Поста ячейка содержит один из трёх символов: <strong>пробел</strong> (<code>_</code>), <code>0</code> или <code>1</code> — удобно для двоичных чисел.</p>
+      <p><strong>Программа</strong> — пронумерованные строки, в каждой одна команда:</p>
+      <ul>
+        <li><code>&gt; N</code> — вправо, перейти к строке N;</li>
+        <li><code>&lt; N</code> — влево, перейти к строке N;</li>
+        <li><code>0 N</code>, <code>1 N</code> — записать символ, перейти к строке N;</li>
+        <li><code>? N, M</code> — если ячейка пустая → строка N, иначе → строка M;</li>
+        <li><code>.</code> — остановить программу.</li>
+      </ul>
+      <p>Номер перехода в командах <code>&gt;</code>, <code>&lt;</code>, <code>0</code>, <code>1</code> можно не указывать — тогда выполняется следующая строка.</p>`,
+    quiz:{id:"th4",kind:"choice",points:1,title:"Блиц-проверка",
+      question:"Что может содержать ячейка ленты троичной машины Поста?",
+      options:["Только метку «1»","Пробел, «0» или «1»","Любую букву алфавита","Цифры от 0 до 9"],
+      correct:1, hint:"«Троичная» — три различных символа."} },
+  { emoji:"🔁", title:"Машина Поста: пример программы",
+    content:`
+      <p>Задача: дойти до конца слова и дописать справа «1».</p>
+      <pre class="program-display">1: ? 3 2
+2: &gt; 1
+3: 1 .</pre>
+      <p>Трассировка для <code>101</code>: строка 1 — ячейка не пуста → строка 2 (шаг вправо, возврат к строке 1); так до первой пустой ячейки; затем строка 1 → строка 3: записать «1» и останов. Итог: <code>1011</code>.</p>
+      <div class="note">Запись <code>1 .</code> означает «записать 1 и остановиться»: точка вместо номера строки.</div>`,
+    quiz:{id:"th5",kind:"choice",points:1,title:"Блиц-проверка",
+      question:"Что делает команда «? N, M» машины Поста?",
+      options:["Записывает символ в текущую ячейку",
+               "Проверяет содержимое ячейки: если пустая — переход к строке N, иначе к строке M",
+               "Останавливает программу",
+               "Сдвигает каретку влево на N ячеек"],
+      correct:1, hint:"Знак вопроса — вопрос о содержимом ячейки."} },
+  { emoji:"🔤", title:"Нормальные алгорифмы Маркова: правила",
+    content:`
+      <p><strong>Нормальный алгорифм</strong> преобразует строки с помощью системы <strong>подстановок</strong>:</p>
+      <pre class="program-display">слово-образец -&gt; слово-замена</pre>
+      <ul>
+        <li>📌 на каждом шаге подстановки просматриваются <strong>сверху вниз</strong>, применяется <strong>первая подходящая</strong>: заменяется <strong>самое левое</strong> вхождение образца;</li>
+        <li>пустая левая часть (<code>-&gt; бв</code>) — замена вставляется в начало слова (обычно ставится последней, иначе зацикливание);</li>
+        <li>пустая правая часть (<code>ab -&gt;</code>) — образец стирается;</li>
+        <li>кавычки необязательны: <code>а -&gt; бв</code> и <code>'а' -&gt; 'бв'</code> равносильны;</li>
+        <li>точка после замены (<code>а -&gt; б.</code>) — <strong>терминальная</strong> подстановка: после неё алгорифм завершается.</li>
+      </ul>`,
+    quiz:{id:"th6",kind:"choice",points:1,title:"Блиц-проверка",
+      question:"Какая подстановка применяется на очередном шаге алгорифма Маркова?",
+      options:["Первая подходящая при просмотре сверху вниз, заменяется самое левое вхождение образца",
+               "Случайная из подходящих",
+               "Последняя подходящая в списке",
+               "Все подходящие одновременно"],
+      correct:0, hint:"Порядок списка важен, а вхождение образца — самое…?"} },
+  { emoji:"🧩", title:"Алгорифмы Маркова: примеры",
+    content:`
+      <p><strong>Пример 1.</strong> <code>a -&gt; b</code>, слово <code>abab</code>: <code>abab → bbab → bbbb</code>, затем подходящих подстановок нет — завершение.</p>
+      <p><strong>Пример 2.</strong> <code>1 -&gt; 11 .</code>, слово <code>101</code>: заменяется только самая левая «1», сразу останов: <code>1101</code>.</p>
+      <p><strong>Пример 3.</strong> <code>ab -&gt; .</code>, слово <code>cababd</code>: первое «ab» стирается, останов: <code>cabd</code>.</p>
+      <div class="note">Алгорифм завершается после терминальной подстановки <em>или</em> когда ни одна подстановка не подходит.</div>`,
+    quiz:{id:"th7",kind:"choice",points:1,title:"Блиц-проверка",
+      question:"Что означает точка после слова-замены («а -&gt; б.»)?",
+      options:["Это терминальная подстановка: после её применения алгорифм завершается",
+               "Это комментарий",
+               "Подстановку нужно повторить ещё раз",
+               "Точка отделяет образец от замены"],
+      correct:0, hint:"Точка ставит «точку» в работе алгорифма."} },
+  { emoji:"⚖️", title:"Сравнение трёх машин",
+    content:`
+      <table style="width:100%;border-collapse:collapse;margin:10px 0;font-size:13.5px">
+        <thead><tr>
+          <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border)"></th>
+          <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border)">🎞 Тьюринг</th>
+          <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border)">📼 Пост</th>
+          <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border)">🔤 Марков</th>
+        </tr></thead>
+        <tbody>
+          <tr><td style="padding:8px;border-bottom:1px solid var(--border)">Память</td><td style="padding:8px;border-bottom:1px solid var(--border)">лента, любой алфавит</td><td style="padding:8px;border-bottom:1px solid var(--border)">лента: пробел, 0, 1</td><td style="padding:8px;border-bottom:1px solid var(--border)">одно слово</td></tr>
+          <tr><td style="padding:8px;border-bottom:1px solid var(--border)">Программа</td><td style="padding:8px;border-bottom:1px solid var(--border)">таблица «состояние × символ»</td><td style="padding:8px;border-bottom:1px solid var(--border)">пронумерованные команды</td><td style="padding:8px;border-bottom:1px solid var(--border)">список подстановок</td></tr>
+          <tr><td style="padding:8px;border-bottom:1px solid var(--border)">Ветвление</td><td style="padding:8px;border-bottom:1px solid var(--border)">через состояния</td><td style="padding:8px;border-bottom:1px solid var(--border)">команда «?»</td><td style="padding:8px;border-bottom:1px solid var(--border)">порядок правил</td></tr>
+          <tr><td style="padding:8px">Останов</td><td style="padding:8px">состояние q0</td><td style="padding:8px">команда «.»</td><td style="padding:8px">терминальная подстановка / нет подходящих</td></tr>
+        </tbody>
+      </table>`,
+    quiz:{id:"th8",kind:"choice",points:1,title:"Блиц-проверка",
+      question:"Когда завершается работа нормального алгорифма Маркова?",
+      options:["После терминальной подстановки или когда ни одна подстановка не подходит",
+               "Только по команде оператора",
+               "Через фиксированное число шагов",
+               "Когда заканчивается лента"],
+      correct:0, hint:"Два способа завершиться: «точка» и «нечего применять»."} },
+  { emoji:"🔗", title:"Эквивалентность и тезис Тьюринга",
+    content:`
+      <div class="note"><strong>Теорема об эквивалентности:</strong> машина Тьюринга, машина Поста и нормальные алгорифмы Маркова равны по возможностям — любую программу на одной машине можно переписать для другой.</div>
+      <p>Поэтому все три модели называют <strong>универсальными исполнителями</strong>: класс задач, которые они решают, совпадает с классом алгоритмически разрешимых задач.</p>
+      <p>💡 На практике идеи этих машин живут в программировании: автоматы состояний, очереди и очереди-деки, строковые замены (регулярные выражения, рефакторинг кода).</p>`,
+    quiz:{id:"th9",kind:"choice",points:1,title:"Блиц-проверка",
+      question:"Что означает эквивалентность трёх универсальных исполнителей?",
+      options:["Любую программу на одной машине можно переписать для любой другой",
+               "Все три машины работают с одинаковой скоростью",
+               "У них одинаковый размер ленты",
+               "Их придумал один и тот же учёный"],
+      correct:0, hint:"Эквивалентность — о множестве решаемых задач, а не о скорости."} },
+  { emoji:"🎯", title:"Итоги темы: чек-лист",
+    content:`
+      <ul>
+        <li>✅ Универсальные исполнители: машина Тьюринга, машина Поста, алгорифмы Маркова — эквивалентны.</li>
+        <li>✅ МТ: лента + каретка; старт q1, останов q0; команда = символ + направление + новое состояние.</li>
+        <li>✅ Пост: лента из пробела/0/1; команды <code>&gt; &lt; 0 1 ? .</code>; программа — строки с номерами.</li>
+        <li>✅ Марков: подстановки «образец -&gt; замена»; первая подходящая сверху, самое левое вхождение; точка — терминальная.</li>
+        <li>✅ Тезис Тьюринга: любой алгоритм = программа универсального исполнителя.</li>
+      </ul>
+      <p><strong>[расширение]</strong>  Существует алгоритмически неразрешимая <em>проблема остановки</em>: нельзя построить универсальный алгоритм, который по произвольной программе и входу определял бы, остановится ли она.</p>`,
+    quiz:{id:"th10",kind:"choice",points:1,title:"Блиц-проверка",
+      question:"[расширение] Какая задача для универсальных исполнителей алгоритмически неразрешима?",
+      options:["Проблема остановки программы","Задача сортировки массива",
+               "Задача сложения двух чисел","Задача поиска подстроки в строке"],
+      correct:0, hint:"Эту задачу упоминал Алан Тьюринг: нельзя заранее узнать, завершится ли произвольная программа."} }
+];
+
+/* ---------- ТЕСТ: 10 вопросов ---------- */
+const TEST_Q = [
+  {id:"q1",kind:"choice",points:1,title:"Модель 1936 года",
+   question:"Эта модель универсального исполнителя предложена в 1936 году для уточнения понятия алгоритма: бесконечная лента с ячейками и каретка, которая читает и записывает символы. Как она называется?",
+   options:["Машина Поста","Машина Тьюринга","Нормальный алгорифм Маркова","Машина фон Неймана"],correct:1,
+   hint:"Автор — английский математик; машина носит его имя."},
+  {id:"q2",kind:"choice",points:1,title:"Устройство МТ",
+   question:"Из чего состоит машина Тьюринга?",
+   options:["Из каретки (считывающей и записывающей головки) и бесконечной ленты, разбитой на ячейки",
+            "Из стека и очереди",
+            "Из конечного числа регистров памяти и процессора",
+            "Из таблицы умножения и счётчика"],correct:0,
+   hint:"Два основных элемента: устройство чтения/записи и носитель данных."},
+  {id:"q3",kind:"choice",points:1,title:"Начальное состояние",
+   question:"В каком состоянии начинает работу машина Тьюринга?",
+   options:["q0","q1","В любом по выбору программиста","Состояние не имеет значения"],correct:1,
+   hint:"Начальное состояние отличается от конечного."},
+  {id:"q4",kind:"choice",points:1,title:"Состояние q0",
+   question:"Что означает состояние q0 в машине Тьюринга?",
+   options:["Начальное состояние","Состояние ошибки",
+            "Конечное состояние: попав в него, автомат заканчивает работу",
+            "Состояние ожидания ввода данных"],correct:2,
+   hint:"Вспомните, какое состояние считается «нулевым» по смыслу работы автомата."},
+  {id:"q5",kind:"choice",points:1,title:"Алфавит Поста",
+   question:"Какие символы может содержать ячейка ленты троичной машины Поста?",
+   options:["Только метку «1»","Пробел, «0» и «1»","Любые буквы алфавита","Только «0» и «1»"],correct:1,
+   hint:"«Троичная» — значит ровно три разных символа."},
+  {id:"q6",kind:"choice",points:1,title:"Команда «?» Поста",
+   question:"Что делает команда «? N, M» машины Поста?",
+   options:["Записывает символ в текущую ячейку",
+            "Перемещает каретку вправо",
+            "Проверяет содержимое ячейки и переходит к строке N или M",
+            "Останавливает программу"],correct:2,
+   hint:"Знак вопроса — это вопрос о содержимом ячейки."},
+  {id:"q7",kind:"choice",points:1,title:"Автор алгорифмов",
+   question:"Кто предложил нормальные алгорифмы как модель универсального исполнителя?",
+   options:["Дэвид Хаффман","А. А. Марков","Клод Шеннон","Норберт Винер"],correct:1,
+   hint:"Название модели говорит само за себя."},
+  {id:"q8",kind:"choice",points:1,title:"Порядок подстановок",
+   question:"Как выбирается подстановка на очередном шаге нормального алгорифма?",
+   options:["Подстановки просматриваются сверху вниз, применяется первая подходящая (заменяется самое левое вхождение образца)",
+            "Подстановки выбираются случайным образом",
+            "Подстановки просматриваются снизу вверх",
+            "Всегда применяется подстановка с самым длинным образцом"],correct:0,
+   hint:"Важен порядок записи правил и позиция вхождения в слове."},
+  {id:"q9",kind:"choice",points:1,title:"Точка в подстановке",
+   question:"Что означает символ «.» после слова-замены в алгорифме Маркова?",
+   options:["Слово-замену нужно удалить",
+            "Подстановка терминальная: после её применения алгорифм заканчивает работу",
+            "Нужно перейти к следующей подстановке, не останавливаясь",
+            "Это комментарий"],correct:1,
+   hint:"Точка ставит «точку» в работе алгорифма."},
+  {id:"q10",kind:"choice",points:1,title:"Эквивалентность",
+   question:"Как связаны возможности машины Тьюринга, машины Поста и нормальных алгорифмов Маркова?",
+   options:["Они эквивалентны: каждая машина может моделировать любую другую",
+            "Машина Тьюринга строго мощнее остальных",
+            "Алгорифмы Маркова работают только со словами, поэтому слабее",
+            "Они несравнимы"],correct:0,
+   hint:"См. теорему об эквивалентности и тезис Тьюринга."}
+];
+
+/* ---------- ЗАДАНИЯ: МАШИНА ТЬЮРИНГА ---------- */
+const TURING_TASKS = [
+  {id:"tu1",machine:"turing",kind:"predict",points:1,title:"Замена символов",
+   text:"Выполните программу для начальной ленты и запишите итоговое содержимое ленты слитно, без пробелов.",
+   program:"q1 a b > q1\nq1 b b > q1\nq1 _ _ . q0", word:"abbaa", answer:"bbbbb",
+   hint:"Головка движется вправо; каждая «a» превращается в «b». Останов — на первой пустой ячейке справа от слова."},
+  {id:"tu2",machine:"turing",kind:"predict",points:1,title:"Инверсия",
+   text:"Выполните программу и запишите итоговое содержимое ленты.",
+   program:"q1 a b > q1\nq1 b a > q1\nq1 _ _ . q0", word:"abab", answer:"baba",
+   hint:"Каждая «a» становится «b», а каждая «b» — «a». Уже заменённый символ не обрабатывается повторно: головка уходит вправо."},
+  {id:"tu3",machine:"turing",kind:"predict",points:1,title:"Пометить границы",
+   text:"Выполните программу и запишите итоговое содержимое ленты.",
+   program:"q1 a * > q2\nq2 a a > q2\nq2 _ _ < q3\nq3 a * . q0", word:"aaaa", answer:"*aa*",
+   hint:"Два прохода: сначала помечается первая «a», затем головка идёт до конца слова, возвращается на шаг назад и помечает последнюю «a»."},
+  {id:"tu4",machine:"turing",kind:"predict",points:1,title:"Дополнить нулём",
+   text:"Выполните программу для двоичного числа и запишите итоговое содержимое ленты.",
+   program:"q1 1 1 > q1\nq1 0 0 > q1\nq1 _ 0 . q0", word:"101", answer:"1010",
+   hint:"Слово просматривается до конца без изменений, а в первую пустую ячейку справа записывается «0»."},
+  {id:"tu5",machine:"turing",kind:"predict",points:1,title:"Приписать два символа",
+   text:"Выполните программу и запишите итоговое содержимое ленты.",
+   program:"q1 a a > q1\nq1 _ b > q2\nq2 _ b . q0", word:"aaa", answer:"aaabb",
+   hint:"После слова головка обрабатывает две пустые ячейки подряд, записывая в каждую «b»."},
+  {id:"tu6",machine:"turing",kind:"program",points:1,title:"Заменить все a на b",
+   text:"Напишите программу, которая заменяет все символы <code>a</code> на <code>b</code>, доходит до конца слова и останавливается. Алфавит: a, b. В начале каретка стоит на первом символе слова, состояние q1.",
+   tests:[{in:"a",out:"b"},{in:"aa",out:"bb"},{in:"ba",out:"bb"},{in:"abab",out:"bbbb"}],
+   template:"# формат: состояние символ новыйСимвол направление новоеСостояние\n# пример:  q1 a b > q1\n\nq1 a b > q1\n",
+   hint:"Нужны команды для всех встречающихся символов: «a», «b» и пустой ячейки. Останов — переход в q0.",
+   solution:"q1 a b > q1\nq1 b b > q1\nq1 _ _ . q0",
+   solutionNote:"Двигаемся вправо: «a» заменяем на «b», «b» не трогаем, на пробеле — останов."},
+  {id:"tu7",machine:"turing",kind:"program",points:1,title:"Дописать «!»",
+   text:"Напишите программу, которая дописывает символ <code>!</code> сразу после слова и останавливается. Алфавит: a, b, !",
+   tests:[{in:"a",out:"a!"},{in:"ab",out:"ab!"},{in:"b",out:"b!"}],
+   template:"# формат: состояние символ новыйСимвол направление новоеСостояние\n\n",
+   hint:"Сначала дойдите до первой пустой ячейки справа от слова (не меняя символы), затем запишите «!» и перейдите в q0.",
+   solution:"q1 a a > q1\nq1 b b > q1\nq1 _ ! . q0",
+   solutionNote:"Пропускаем слово без изменений, в первой пустой ячейке пишем «!» и останавливаемся."},
+  {id:"tu8",machine:"turing",kind:"program",points:1,title:"Заменить все 0 на 1",
+   text:"Напишите программу, которая заменяет все <code>0</code> на <code>1</code> в двоичном числе и останавливается в конце слова. Алфавит: 0, 1.",
+   tests:[{in:"0",out:"1"},{in:"010",out:"111"},{in:"11",out:"11"},{in:"10",out:"11"}],
+   template:"# формат: состояние символ новыйСимвол направление новоеСостояние\n\n",
+   hint:"Двигайтесь вправо: «0» заменяйте на «1», «1» оставляйте как есть, на пустой ячейке — останов.",
+   solution:"q1 0 1 > q1\nq1 1 1 > q1\nq1 _ _ . q0",
+   solutionNote:"То же, что замена a→b, но для двоичного алфавита."},
+  {id:"tu9",machine:"turing",kind:"program",points:1,title:"Пометить первый символ",
+   text:"Напишите программу, которая заменяет <em>первый</em> символ слова на <code>*</code> и сразу останавливается. Алфавит: a, b, *.",
+   tests:[{in:"ab",out:"*b"},{in:"bba",out:"*ba"},{in:"a",out:"*"}],
+   template:"# формат: состояние символ новыйСимвол направление новоеСостояние\n\n",
+   hint:"Каретка уже стоит на первом символе — движение не нужно: направление «.» и переход в q0.",
+   solution:"q1 a * . q0\nq1 b * . q0",
+   solutionNote:"Две команды без движения: какой бы символ ни был первым, пишем «*» и останавливаемся."},
+  {id:"tu10",machine:"turing",kind:"program",points:1,title:"Удалить последний символ",
+   text:"Напишите программу, которая удаляет <em>последний</em> символ слова и останавливается. Алфавит: a, b, c. Для слова из одного символа лента должна стать пустой.",
+   tests:[{in:"abc",out:"ab"},{in:"ab",out:"a"},{in:"a",out:""}],
+   template:"# формат: состояние символ новыйСимвол направление новоеСостояние\n\n",
+   hint:"Два прохода: дойти до первой пустой ячейки справа от слова, затем шаг влево («<») и записать «_» (стереть символ).",
+   solution:"q1 a a > q1\nq1 b b > q1\nq1 c c > q1\nq1 _ _ < q2\nq2 a _ . q0\nq2 b _ . q0\nq2 c _ . q0",
+   solutionNote:"q1 идёт до пробела, q2 делает шаг влево и стирает последний символ."}
+];
+
+/* ---------- ЗАДАНИЯ: МАШИНА ПОСТА ---------- */
+const POST_TASKS = [
+  {id:"po1",machine:"post",kind:"predict",points:1,title:"Дописать единицу",
+   text:"Выполните программу для начальной ленты и запишите итоговое содержимое ленты слитно, без пробелов.",
+   program:"1: ? 3 2\n2: > 1\n3: 1 .", word:"101", answer:"1011",
+   hint:"Строка 1: «? 3 2» — если ячейка пустая, перейти к строке 3, иначе к строке 2. Программа ищет конец слова."},
+  {id:"po2",machine:"post",kind:"predict",points:1,title:"Стереть последний символ",
+   text:"Выполните программу и запишите итоговое содержимое ленты.",
+   program:"1: ? 3 2\n2: > 1\n3: < 4\n4: _ .", word:"101", answer:"10",
+   hint:"Найдя пустую ячейку справа от слова, программа делает шаг влево (строка 3) и стирает символ (строка 4)."},
+  {id:"po3",machine:"post",kind:"predict",points:1,title:"Приписать два нуля",
+   text:"Выполните программу и запишите итоговое содержимое ленты.",
+   program:"1: ? 3 2\n2: > 1\n3: 0 4\n4: 0 .", word:"101", answer:"10100",
+   hint:"После выхода за конец слова подряд выполняются две записи «0»."},
+  {id:"po4",machine:"post",kind:"predict",points:1,title:"Инверсия первого символа",
+   text:"Выполните программу и запишите итоговое содержимое ленты.",
+   program:"1: ? 4 2 3\n2: 1 .\n3: 0 .\n4: .", word:"1010", answer:"0010",
+   hint:"Команда «? 4 2 3» — троичное ветвление: пробел → строка 4, «0» → строка 2, «1» → строка 3. Первый символ — «1»."},
+  {id:"po5",machine:"post",kind:"predict",points:1,title:"Инверсия всего слова",
+   text:"Выполните программу и запишите итоговое содержимое ленты.",
+   program:"1: ? 5 2 4\n2: 1 3\n3: > 1\n4: 0 3\n5: .", word:"100", answer:"011",
+   hint:"Цикл: строка 1 анализирует ячейку; «0» превращается в «1» (строка 2), «1» — в «0» (строка 4); после каждого символа — шаг вправо (строка 3)."},
+  {id:"po6",machine:"post",kind:"program",points:1,title:"Дойти до конца слова",
+   text:"Напишите программу, которая перемещает каретку на первую пустую ячейку справа от слова и останавливается. Содержимое ленты менять нельзя. Проверяется и результат на ленте, и положение каретки.",
+   tests:[{in:"101",out:"101",head:"after"},{in:"1",out:"1",head:"after"},{in:"10",out:"10",head:"after"}],
+   template:"# команды: > N  < N  0 N  1 N  _ N  ? N M  ? N M K  .\n# пример:  1: > 2\n\n1: \n",
+   hint:"Двигайтесь вправо, пока ячейка не пуста; как только встретили пробел — останавливайтесь командой «.».",
+   solution:"1: ? 2 3\n2: .\n3: > 1",
+   solutionNote:"Ветвление: пробел → останов (строка 2), иначе шаг вправо и возврат к проверке."},
+  {id:"po7",machine:"post",kind:"program",points:1,title:"Дописать 1 в конец",
+   text:"Напишите программу, которая дописывает «1» в конец слова и останавливается.",
+   tests:[{in:"10",out:"101"},{in:"1",out:"11"},{in:"01",out:"011"}],
+   template:"# команды: > N  < N  0 N  1 N  _ N  ? N M  ? N M K  .\n\n1: \n",
+   hint:"Сначала найдите конец слова (пустую ячейку), затем запишите в неё «1» и остановитесь.",
+   solution:"1: ? 3 2\n2: > 1\n3: 1 .",
+   solutionNote:"Классический цикл поиска конца слова + запись «1»."},
+  {id:"po8",machine:"post",kind:"program",points:1,title:"Удалить последний символ",
+   text:"Напишите программу, которая стирает последний символ слова и останавливается. Для слова из одного символа лента должна стать пустой.",
+   tests:[{in:"101",out:"10"},{in:"11",out:"1"},{in:"1",out:""}],
+   template:"# команды: > N  < N  0 N  1 N  _ N  ? N M  ? N M K  .\n\n1: \n",
+   hint:"Дойдите до пробела, сделайте шаг влево и запишите пробел («_ N»).",
+   solution:"1: ? 3 2\n2: > 1\n3: < 4\n4: _ .",
+   solutionNote:"После поиска конца слова — шаг влево и стирание."},
+  {id:"po9",machine:"post",kind:"program",points:1,title:"Заменить все 0 на 1",
+   text:"Напишите программу, которая заменяет все «0» на «1», проходит всё слово и останавливается.",
+   tests:[{in:"0",out:"1"},{in:"1010",out:"1111"},{in:"111",out:"111"}],
+   template:"# команды: > N  < N  0 N  1 N  _ N  ? N M  ? N M K  .\n\n1: \n",
+   hint:"Используйте троичное ветвление «? N M K»: пробел → останов, «0» → запись «1» и шаг вправо, «1» → просто шаг вправо.",
+   solution:"1: ? 5 2 4\n2: 1 3\n3: > 1\n4: > 1\n5: .",
+   solutionNote:"Троичное ветвление в начале цикла обрабатывает все три случая."},
+  {id:"po10",machine:"post",kind:"program",points:1,title:"Проверка пустоты",
+   text:"Напишите программу: если слово пустое (лента пуста) — записать «1»; иначе оставить ленту без изменений и остановиться.",
+   tests:[{in:"",out:"1"},{in:"10",out:"10"},{in:"0",out:"0"}],
+   template:"# команды: > N  < N  0 N  1 N  _ N  ? N M  ? N M K  .\n\n1: \n",
+   hint:"Достаточно одной команды ветвления «? N M»: при пустой ячейке — переход к записи «1» и останову, иначе — сразу к останову.",
+   solution:"1: ? 2 3\n2: 1 .\n3: .",
+   solutionNote:"Одно ветвление: пробел → записать «1» и останов; иначе сразу останов."}
+];
+
+/* ---------- ЗАДАНИЯ: АЛГОРИФМЫ МАРКОВА ---------- */
+const MARKOV_TASKS = [
+  {id:"ma1",machine:"markov",kind:"predict",points:1,title:"Замена a на b",
+   text:"Выполните алгорифм для начального слова и запишите результат.",
+   program:"a -> b", word:"abab", answer:"bbbb",
+   hint:"Подстановка применяется повторно, пока в слове есть «a»; затем ни одна подстановка не подходит, и алгорифм завершается."},
+  {id:"ma2",machine:"markov",kind:"predict",points:1,title:"Перестановка",
+   text:"Выполните алгорифм для начального слова и запишите результат.",
+   program:"ba -> ab\nb -> b .", word:"ba", answer:"ab",
+   hint:"Шаг 1: срабатывает первая подстановка, «ba» → «ab». Шаг 2: «ba» в слове больше нет, применяется вторая — терминальная — подстановка, которая ничего не меняет и останавливает алгорифм."},
+  {id:"ma3",machine:"markov",kind:"predict",points:1,title:"Удвоение первой единицы",
+   text:"Выполните алгорифм для начального слова и запишите результат.",
+   program:"1 -> 11 .", word:"101", answer:"1101",
+   hint:"Подстановка терминальная: заменяется только самое левое вхождение «1», после чего алгорифм сразу завершается."},
+  {id:"ma4",machine:"markov",kind:"predict",points:1,title:"Два шага",
+   text:"Выполните алгорифм для начального слова и запишите результат. Будьте внимательны: результат может совпасть с исходным словом!",
+   program:"a -> b\nb -> a .", word:"ab", answer:"ab",
+   hint:"Шаг 1: «ab» → «bb» (первая подстановка). Шаг 2: «a» в слове нет, применяется вторая (терминальная): самая левая «b» → «a», получаем «ab» и останов."},
+  {id:"ma5",machine:"markov",kind:"predict",points:1,title:"Удаление первой пары",
+   text:"Выполните алгорифм для начального слова и запишите результат.",
+   program:"ab -> .", word:"cababd", answer:"cabd",
+   hint:"Запись «ab -> .» означает «стереть первое найденное «ab» и остановиться»: правая часть пуста, точка — терминальность."},
+  {id:"ma6",machine:"markov",kind:"program",points:1,title:"Заменить все a на b",
+   text:"Напишите алгорифм, который заменяет все «a» на «b» и завершается.",
+   tests:[{in:"aaa",out:"bbb"},{in:"aba",out:"bbb"},{in:"b",out:"b"}],
+   template:"# формат: образец -> замена   (точка после замены — останов)\n\n",
+   hint:"Достаточно одной нетерминальной подстановки — она будет применяться, пока в слове есть «a», затем алгорифм завершится сам.",
+   solution:"a -> b",
+   solutionNote:"Нетерминальная подстановка применяется снова и снова, пока подходят образцы."},
+  {id:"ma7",machine:"markov",kind:"program",points:1,title:"Удалить все звёздочки",
+   text:"Напишите алгорифм, который удаляет из слова все символы <code>*</code>.",
+   tests:[{in:"a*b*c",out:"abc"},{in:"x**y",out:"xy"},{in:"**",out:""}],
+   template:"# формат: образец -> замена   (пустая замена стирает образец)\n\n",
+   hint:"Нужна подстановка с пустой правой частью и БЕЗ точки — чтобы стирались все звёздочки подряд, а не только первая.",
+   solution:"* -> ",
+   solutionNote:"Пустая правая часть стирает образец; без точки правило повторяется до исчезновения «*»."},
+  {id:"ma8",machine:"markov",kind:"program",points:1,title:"Звёздочка в начало",
+   text:"Напишите алгорифм, который добавляет <code>*</code> в начало слова и останавливается (для пустого слова результат — просто «*»).",
+   tests:[{in:"ab",out:"*ab"},{in:"x",out:"*x"},{in:"",out:"*"}],
+   template:"# формат: образец -> замена\n\n",
+   hint:"Подстановка с пустой левой частью вставляет замену в начало. Обязательно сделайте её терминальной, иначе алгорифм зациклится.",
+   solution:"-> * .",
+   solutionNote:"Пустой образец = вставка в начало; точка обязательна, иначе бесконечный цикл."},
+  {id:"ma9",machine:"markov",kind:"program",points:1,title:"Удалить все пары ab",
+   text:"Напишите алгорифм, который удаляет из слова <em>все</em> вхождения «ab». Например, «cababd» → «cd».",
+   tests:[{in:"abab",out:""},{in:"cababd",out:"cd"},{in:"ab",out:""}],
+   template:"# формат: образец -> замена\n\n",
+   hint:"Одна нетерминальная подстановка «ab -> …» применяется снова и снова, пока в слове остаются такие пары.",
+   solution:"ab -> ",
+   solutionNote:"Стираем пары «ab» по одной, пока они есть в слове."},
+  {id:"ma10",machine:"markov",kind:"program",points:1,title:"Первая перестановка",
+   text:"Напишите алгорифм, который заменяет <em>первое</em> вхождение «ab» на «ba» и сразу останавливается.",
+   tests:[{in:"abab",out:"baab"},{in:"cab",out:"cba"},{in:"ab",out:"ba"}],
+   template:"# формат: образец -> замена   (точка после замены — останов)\n\n",
+   hint:"Используйте терминальную подстановку: она применится ровно один раз и завершит алгорифм.",
+   solution:"ab -> ba .",
+   solutionNote:"Точка делает подстановку терминальной — применяется один раз."}
+];
+
+const REF = {
+  turing:`
+    <p><strong>Лента</strong> бесконечна в обе стороны; пустая ячейка обозначается <code>_</code>. <strong>Каретка</strong> в начале стоит на первом символе слова. Состояние <code>q1</code> — начальное, <code>q0</code> — конечное (останов).</p>
+    <p><strong>Формат команды</strong> — пять частей в строке:</p>
+    <pre class="program-display">состояние символ новыйСимвол направление новоеСостояние</pre>
+    <p>Пример: <code>q1 a b &gt; q2</code> — «в состоянии q1 над символом a: записать b, сдвинуться вправо, перейти в q2».</p>
+    <ul>
+      <li>направление: <code>&gt;</code> — вправо, <code>&lt;</code> — влево, <code>.</code> — остаться на месте;</li>
+      <li>строки, начинающиеся с <code>#</code>, — комментарии;</li>
+      <li>если для пары (состояние, символ) команды нет — машина останавливается с ошибкой.</li>
+    </ul>`,
+  post:`
+    <p><strong>Лента</strong>: ячейки содержат пробел (<code>_</code>), <code>0</code> или <code>1</code>. Каретка в начале стоит на первом символе слова. Программа — пронумерованные строки <code>N: команда</code>.</p>
+    <ul>
+      <li><code>&gt; N</code> — вправо, перейти к строке N (без N — к следующей);</li>
+      <li><code>&lt; N</code> — влево, перейти к строке N;</li>
+      <li><code>0 N</code>, <code>1 N</code> — записать символ, перейти к строке N;</li>
+      <li><code>_ N</code> — стереть ячейку (записать пробел);</li>
+      <li><code>? N M</code> — если ячейка пустая → строка N, иначе → строка M;</li>
+      <li><code>? N M K</code> — пробел → N, «0» → M, «1» → K;</li>
+      <li><code>.</code> — останов; точка после команды (<code>1 .</code>) — «выполнить и остановиться».</li>
+    </ul>
+    <p>Строки с <code>#</code> — комментарии.</p>`,
+  markov:`
+    <p>Алгорифм — список <strong>подстановок</strong>, по одной в строке:</p>
+    <pre class="program-display">слово-образец -&gt; слово-замена</pre>
+    <ul>
+      <li><code>образец -&gt; замена .</code> — <strong>терминальная</strong> подстановка: после применения алгорифм завершается;</li>
+      <li>пустая левая часть (<code>-&gt; abc</code>) — замена вставляется в начало слова (делайте её терминальной, иначе возможно зацикливание);</li>
+      <li>пустая правая часть (<code>ab -&gt;</code>) — образец стирается;</li>
+      <li>кавычки необязательны: <code>а -&gt; бв</code> и <code>'а' -&gt; 'бв'</code> равносильны;</li>
+      <li>строки с <code>#</code> — комментарии.</li>
+    </ul>
+    <p><strong>Порядок работы:</strong> на каждом шаге правила просматриваются сверху вниз; применяется первое подходящее — заменяется самое левое вхождение образца. Завершение — после терминальной подстановки или когда ни одно правило не подходит.</p>`
+};
+
+const SHEETCFG = {
+  theory:{title:"Теория", fname:"theory.md"},
+  turing:{title:"Машина Тьюринга", tasks:TURING_TASKS, fname:"turing.tm", icon:"🎞",
+    desc:"Эмулятор машины Тьюринга: 5 заданий на выполнение готовых программ и 5 заданий на написание своих. Задание без подсказки — 1 балл, с подсказкой — 0,5."},
+  post:{title:"Машина Поста", tasks:POST_TASKS, fname:"post.pm", icon:"📼",
+    desc:"Эмулятор троичной машины Поста: 5 заданий на трассировку и 5 на написание своих программ. Задание без подсказки — 1 балл, с подсказкой — 0,5."},
+  markov:{title:"Алгорифмы Маркова", tasks:MARKOV_TASKS, fname:"markov.ma", icon:"🔤",
+    desc:"Эмулятор нормальных алгорифмов Маркова: 5 заданий на трассировку и 5 на написание своих алгорифмов. Задание без подсказки — 1 балл, с подсказкой — 0,5."}
+};
+const TABS = [["theory","📖 Теория"],["test","✅ Тест"],["turing","🎞 Тьюринг"],["post","📼 Пост"],["markov","🔤 Марков"],["results","🏁 Итоги"]];
+
+/* =========================================================
+   STATE (сохраняется: работа идёт 2 пары уроков)
+   ========================================================= */
+const state = {
+  sheet:"start", theoryStep:0, studentName:"",
+  tasks:{},
+  emu:{
+    turing:{program:SHEETCFG.turing ? "q1 a b > q1\nq1 b b > q1\nq1 _ _ . q0" : "", word:"abba", runtime:null},
+    post:{program:"1: ? 3 2\n2: > 1\n3: 1 .", word:"101", runtime:null},
+    markov:{program:"a -> b", word:"abab", runtime:null}
+  }
+};
+try{
+  const saved = JSON.parse(localStorage.getItem(STORE_KEY) || "null");
+  if(saved && saved.sheet){
+    state.sheet = saved.sheet; state.theoryStep = saved.theoryStep || 0;
+    state.studentName = saved.studentName || "";
+    state.tasks = saved.tasks || {};
+    if(saved.emu) Object.keys(state.emu).forEach(k=>{ if(saved.emu[k]) state.emu[k] = Object.assign(state.emu[k], saved.emu[k]); });
+  }
+}catch(e){}
+function saveState(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){} }
+let scrollTarget = null;
+
+/* =========================================================
+   ДВИЖКИ МАШИН
+   ========================================================= */
+function tapeWord(cells){
+  const ks = Object.keys(cells).map(Number).filter(i=>cells[i] && cells[i]!=="_");
+  if(!ks.length) return "";
+  const lo = Math.min(...ks), hi = Math.max(...ks);
+  let s = "";
+  for(let i=lo;i<=hi;i++) s += (cells[i] || "_");
+  return s;
+}
+function cellsFromWord(word){
+  const cells = {};
+  const w = String(word||"").trim().replace(/\s+/g,"");
+  for(let i=0;i<w.length;i++){ if(w[i] !== "_") cells[i] = w[i]; }
+  return cells;
+}
+/* --- Тьюринг --- */
+function tmParse(text){
+  const cmds = {}, errors = [];
+  String(text||"").split("\n").forEach((raw,i)=>{
+    const t = raw.trim();
+    if(!t || t.startsWith("#") || t.startsWith("//")) return;
+    const p = t.split(/\s+/);
+    if(p.length !== 5){ errors.push("строка "+(i+1)+": нужно 5 частей (состояние символ новыйСимвол направление новоеСостояние)"); return; }
+    const st=p[0], sym=p[1], w=p[2], dir=p[3], next=p[4];
+    if(dir!==">" && dir!=="<" && dir!=="."){ errors.push("строка "+(i+1)+": направление должно быть «>», «<» или «.»"); return; }
+    if(st==="q0"){ errors.push("строка "+(i+1)+": q0 — конечное состояние, команды в нём не задаются"); return; }
+    cmds[st+"|"+sym] = {w:w,dir:dir,next:next};
+  });
+  return {cmds:cmds, errors:errors};
+}
+function tmInit(word){ return {cells:cellsFromWord(word), head:0, st:"q1", status:"ready", steps:0, msg:""}; }
+function tmStepOnce(rt, cmds){
+  if(rt.status!=="ready") return;
+  const sym = rt.cells[rt.head] || "_";
+  const c = cmds[rt.st+"|"+sym];
+  if(!c){ rt.status="error"; rt.msg="Ошибка: нет команды для ("+rt.st+", "+sym+")"; return; }
+  if(c.w==="_") delete rt.cells[rt.head]; else rt.cells[rt.head]=c.w;
+  if(c.dir===">") rt.head++; else if(c.dir==="<") rt.head--;
+  rt.steps++;
+  rt.st = c.next;
+  if(rt.st==="q0"){ rt.status="halted"; rt.msg="Останов: конечное состояние q0"; }
+}
+function tmRun(rt, cmds, limit){
+  while(rt.status==="ready" && rt.steps<limit) tmStepOnce(rt, cmds);
+  if(rt.status==="ready"){ rt.status="loop"; rt.msg="Не остановилась за "+limit+" шагов — вероятно, зацикливание"; }
+}
+function tmRunTests(text, tests){
+  const prog = tmParse(text);
+  if(prog.errors.length) return {ok:false, msg:"Ошибка в программе: "+prog.errors[0]};
+  if(!Object.keys(prog.cmds).length) return {ok:false, msg:"Программа пуста — напишите хотя бы одну команду."};
+  for(const t of tests){
+    const rt = tmInit(t.in);
+    tmRun(rt, prog.cmds, TM_STEP_LIMIT);
+    if(rt.status==="error") return {ok:false, msg:"Тест «"+(t.in||"(пусто)")+"»: "+rt.msg};
+    if(rt.status==="loop") return {ok:false, msg:"Тест «"+(t.in||"(пусто)")+"»: "+rt.msg};
+    const w = tapeWord(rt.cells);
+    if(w !== t.out) return {ok:false, msg:"Тест «"+(t.in||"(пусто)")+"»: ожидалось «"+(t.out||"(пусто)")+"», получено «"+(w||"(пусто)")+"»"};
+    if(t.head==="after"){
+      const ks = Object.keys(rt.cells).map(Number);
+      const want = ks.length ? Math.max(...ks)+1 : 0;
+      if(rt.head !== want) return {ok:false, msg:"Тест «"+t.in+"»: слово верное, но каретка должна стоять на первой пустой ячейке справа от слова"};
+    }
+  }
+  return {ok:true};
+}
+/* --- Пост --- */
+function targetParse(tok){
+  if(tok==null) return {target:null, thenStop:false};
+  if(tok===".") return {target:null, thenStop:true};
+  if(/^\d+$/.test(tok)) return {target:tok, thenStop:false};
+  return {target:"?", thenStop:false};
+}
+function postParse(text){
+  const errors = [], items = [];
+  let anyLabel = false;
+  String(text||"").split("\n").forEach(raw=>{
+    let t = raw.trim();
+    if(!t || t.startsWith("#") || t.startsWith("//")) return;
+    let label = null;
+    const m = t.match(/^(\d+)\s*:\s*(.*)$/);
+    if(m){ label = m[1]; t = m[2].trim(); anyLabel = true; }
+    items.push({label:label, body:t, seq:items.length+1});
+  });
+  items.forEach(it=>{ it.key = anyLabel ? it.label : String(it.seq); });
+  if(anyLabel && items.some(it=>!it.label)) errors.push("если используются номера строк «N:», они должны быть у каждой команды");
+  const indexOfKey = {};
+  items.forEach((it,i)=>{
+    if(it.key==null) return;
+    if(indexOfKey[it.key]!==undefined) errors.push("номер строки "+it.key+" встречается дважды");
+    else indexOfKey[it.key] = i;
+  });
+  items.forEach(it=>{
+    const p = it.body.replace(/,/g," ").split(/\s+/).filter(Boolean);
+    if(!p.length){ errors.push("строка "+it.seq+": пустая команда"); return; }
+    const op = p[0];
+    if(op===".") it.cmd = {type:"stop"};
+    else if(op===">"||op==="<") it.cmd = Object.assign({type:"move",dir:op}, targetParse(p[1]));
+    else if(op==="0"||op==="1"||op==="_") it.cmd = Object.assign({type:"write",sym:op}, targetParse(p[1]));
+    else if(op==="?"){
+      if(p.length===3) it.cmd = {type:"branch",targets:[p[1],p[2]]};
+      else if(p.length===4) it.cmd = {type:"branch",targets:[p[1],p[2],p[3]]};
+      else errors.push("строка "+it.seq+": команда «?» требует 2 или 3 номера строк");
+    }
+    else errors.push("строка "+it.seq+": неизвестная команда «"+op+"»");
+  });
+  items.forEach(it=>{
+    if(!it.cmd) return;
+    const tgs = it.cmd.targets || (it.cmd.target!=null ? [it.cmd.target] : []);
+    tgs.forEach(tg=>{ if(indexOfKey[tg]===undefined) errors.push("строка "+it.seq+": нет строки с номером «"+tg+"»"); });
+  });
+  return {items:items, indexOfKey:indexOfKey, errors:errors};
+}
+function postInit(word){ return {cells:cellsFromWord(word), head:0, cur:0, status:"ready", steps:0, msg:""}; }
+function postStepOnce(rt, prog){
+  if(rt.status!=="ready") return;
+  if(rt.cur>=prog.items.length){ rt.status="halted"; rt.msg="Конец программы"; return; }
+  const it = prog.items[rt.cur], c = it.cmd;
+  if(!c){ rt.status="error"; rt.msg="Строка "+it.seq+": команда не распознана"; return; }
+  rt.steps++;
+  const goNext = ()=>{
+    if(c.thenStop){ rt.status="halted"; rt.msg="Останов (команда «.»)"; return; }
+    if(c.target!=null) rt.cur = prog.indexOfKey[c.target];
+    else rt.cur++;
+    if(rt.status==="ready" && rt.cur>=prog.items.length){ rt.status="halted"; rt.msg="Конец программы"; }
+  };
+  switch(c.type){
+    case "stop": rt.status="halted"; rt.msg="Останов (команда «.»)"; break;
+    case "move": rt.head += (c.dir===">"?1:-1); goNext(); break;
+    case "write":
+      if(c.sym==="_") delete rt.cells[rt.head]; else rt.cells[rt.head]=c.sym;
+      goNext(); break;
+    case "branch":{
+      const sym = rt.cells[rt.head] || "_";
+      let ti;
+      if(c.targets.length===3) ti = (sym==="_")?0:(sym==="0"?1:2);
+      else ti = (sym==="_")?0:1;
+      const idx = prog.indexOfKey[c.targets[ti]];
+      if(idx===undefined){ rt.status="error"; rt.msg="Строка "+it.seq+": неверный номер строки в команде «?»"; break; }
+      rt.cur = idx; break;
+    }
+  }
+}
+function postRun(rt, prog, limit){
+  while(rt.status==="ready" && rt.steps<limit) postStepOnce(rt, prog);
+  if(rt.status==="ready"){ rt.status="loop"; rt.msg="Не остановилась за "+limit+" шагов — вероятно, зацикливание"; }
+}
+function postRunTests(text, tests){
+  const prog = postParse(text);
+  if(prog.errors.length) return {ok:false, msg:"Ошибка в программе: "+prog.errors[0]};
+  if(!prog.items.length) return {ok:false, msg:"Программа пуста."};
+  for(const t of tests){
+    const rt = postInit(t.in);
+    postRun(rt, prog, POST_STEP_LIMIT);
+    if(rt.status==="error") return {ok:false, msg:"Тест «"+(t.in||"(пусто)")+"»: "+rt.msg};
+    if(rt.status==="loop") return {ok:false, msg:"Тест «"+(t.in||"(пусто)")+"»: "+rt.msg};
+    const w = tapeWord(rt.cells);
+    if(w !== t.out) return {ok:false, msg:"Тест «"+(t.in||"(пусто)")+"»: ожидалось «"+(t.out||"(пусто)")+"», получено «"+(w||"(пусто)")+"»"};
+    if(t.head==="after"){
+      const ks = Object.keys(rt.cells).map(Number);
+      const want = ks.length ? Math.max(...ks)+1 : 0;
+      if(rt.head !== want) return {ok:false, msg:"Тест «"+t.in+"»: слово верное, но каретка должна стоять на первой пустой ячейке справа от слова"};
+    }
+  }
+  return {ok:true};
+}
+/* --- Марков --- */
+function unquote(s){
+  if(s.length>=2 && ((s[0]==="'" && s[s.length-1]==="'") || (s[0]==='"' && s[s.length-1]==='"'))) return s.slice(1,-1);
+  return s;
+}
+function markovParse(text){
+  const rules = [], errors = [];
+  String(text||"").split("\n").forEach((raw,i)=>{
+    const t = raw.trim();
+    if(!t || t.startsWith("#") || t.startsWith("//")) return;
+    const pos = t.indexOf("->");
+    if(pos<0){ errors.push("строка "+(i+1)+": нет знака «->»"); return; }
+    const l = unquote(t.slice(0,pos).trim());
+    let r = t.slice(pos+2).trim();
+    let terminal = false;
+    if(r.endsWith(".")){ terminal = true; r = r.slice(0,-1).trim(); }
+    rules.push({l:l, r:unquote(r), terminal:terminal});
+  });
+  return {rules:rules, errors:errors};
+}
+function markovInit(word){ return {word:String(word||"").trim(), status:"ready", steps:0, log:[], msg:""}; }
+function markovStepOnce(rt, rules){
+  if(rt.status!=="ready") return;
+  for(let i=0;i<rules.length;i++){
+    const r = rules[i];
+    const ruleText = (r.l||"∅")+" → "+(r.r||"∅")+(r.terminal?" .":"");
+    if(r.l===""){
+      const before = rt.word;
+      rt.word = r.r + rt.word; rt.steps++;
+      rt.log.push({n:rt.steps, rule:ruleText, before:before, after:rt.word});
+      if(rt.log.length>60) rt.log.shift();
+      if(r.terminal){ rt.status="halted"; rt.msg="Останов: терминальная подстановка №"+(i+1); }
+      return;
+    }
+    const idx = rt.word.indexOf(r.l);
+    if(idx>=0){
+      const before = rt.word;
+      rt.word = rt.word.slice(0,idx) + r.r + rt.word.slice(idx + r.l.length);
+      rt.steps++;
+      rt.log.push({n:rt.steps, rule:ruleText, before:before, after:rt.word});
+      if(rt.log.length>60) rt.log.shift();
+      if(r.terminal){ rt.status="halted"; rt.msg="Останов: терминальная подстановка №"+(i+1); }
+      return;
+    }
+  }
+  rt.status="halted"; rt.msg="Завершён: нет применимых подстановок";
+}
+function markovRun(rt, rules, limit){
+  while(rt.status==="ready" && rt.steps<limit) markovStepOnce(rt, rules);
+  if(rt.status==="ready"){ rt.status="loop"; rt.msg="Не завершился за "+limit+" шагов — вероятно, зацикливание"; }
+}
+function markovRunTests(text, tests){
+  const p = markovParse(text);
+  if(p.errors.length) return {ok:false, msg:"Ошибка в алгорифме: "+p.errors[0]};
+  if(!p.rules.length) return {ok:false, msg:"Алгорифм пуст."};
+  for(const t of tests){
+    const rt = markovInit(t.in);
+    markovRun(rt, p.rules, MARKOV_STEP_LIMIT);
+    if(rt.status==="loop") return {ok:false, msg:"Тест «"+(t.in||"(пусто)")+"»: "+rt.msg};
+    if(rt.word !== t.out) return {ok:false, msg:"Тест «"+(t.in||"(пусто)")+"»: ожидалось «"+(t.out||"(пусто)")+"», получено «"+(rt.word||"(пусто)")+"»"};
+  }
+  return {ok:true};
+}
+
+/* =========================================================
+   СОСТОЯНИЕ ЗАДАНИЙ И БАЛЛЫ
+   ========================================================= */
+function allTasks(){ return THEORY.map(s=>s.quiz).concat(TEST_Q, TURING_TASKS, POST_TASKS, MARKOV_TASKS); }
+function findTask(id){ const all = allTasks(); for(const t of all){ if(t.id===id) return t; } return null; }
+function getTS(id){
+  if(!state.tasks[id]){
+    const t = findTask(id);
+    state.tasks[id] = {
+      attempts:0, solved:false, locked:false, gaveUp:false, hintUsed:false, hintOpen:false,
+      answer:"", selected:null, feedback:null,
+      program:(t && t.kind==="program" && t.template) ? t.template : ""
+    };
+  }
+  return state.tasks[id];
+}
+function sheetTasks(sheet){
+  if(sheet==="theory") return THEORY.map(s=>s.quiz);
+  if(sheet==="test") return TEST_Q;
+  if(SHEETCFG[sheet] && SHEETCFG[sheet].tasks) return SHEETCFG[sheet].tasks;
+  return [];
+}
+function taskPoints(t){
+  const ts = getTS(t.id);
+  if(ts.gaveUp || !ts.solved) return 0;
+  return ts.hintUsed ? 0.5 : 1;
+}
+function sheetScore(sheet){ return sheetTasks(sheet).reduce((s,t)=>s+taskPoints(t),0); }
+function totalScore(){ return ["theory","test","turing","post","markov"].reduce((s,k)=>s+sheetScore(k),0); }
+function fmtPts(x){ const v = Math.round(x*10)/10; return (v%1===0) ? String(v) : v.toFixed(1); }
+function gradeInfo(){
+  const pct = totalScore()/TOTAL_MAX;
+  if(pct>=0.9) return ["Отлично (5)","Превосходное владение темой! 🎉"];
+  if(pct>=0.75) return ["Хорошо (4)","Твёрдое понимание материала 👍"];
+  if(pct>=0.5) return ["Удовлетворительно (3)","База усвоена, но есть пробелы — повторите теорию 📖"];
+  return ["Нужно повторить (2)","Вернитесь к листу «Теория» и разберите задания с ошибками 💪"];
+}
+function normAns(s){ return String(s||"").replace(/\s+/g,"").toLowerCase(); }
+function esc(s){ return String(s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+
+/* ---------- подсветка «как в редакторе» ---------- */
+function hlLine(line, machine){
+  if(/^\s*(#|\/\/)/.test(line)) return '<span class="tk-com">'+esc(line)+'</span>';
+  if(!line.trim()) return "";
+  if(machine==="turing"){
+    const p = line.split(/\s+/).filter(Boolean);
+    if(p.length===5){
+      return '<span class="tk-st">'+esc(p[0])+'</span> <span class="tk-sym">'+esc(p[1])+'</span> <span class="tk-sym">'+esc(p[2])+'</span> <span class="tk-dir">'+esc(p[3])+'</span> <span class="tk-st">'+esc(p[4])+'</span>';
+    }
+    return esc(line);
+  }
+  if(machine==="post"){
+    const m = line.match(/^(\d+\s*:)?\s*(.*)$/);
+    let out = m[1] ? '<span class="tk-num">'+esc(m[1])+'</span> ' : "";
+    const p = (m[2]||"").split(/\s+/).filter(Boolean);
+    if(p.length){
+      out += '<span class="tk-dir">'+esc(p[0])+'</span>';
+      p.slice(1).forEach(tok=>{ out += ' <span class="'+(tok==="."?"tk-dir":"tk-num")+'">'+esc(tok)+'</span>'; });
+    }
+    return out;
+  }
+  const idx = line.indexOf("->");
+  if(idx<0) return esc(line);
+  const l = line.slice(0,idx), r = line.slice(idx+2);
+  const term = /\.\s*$/.test(r);
+  const rClean = r.replace(/\s*\.\s*$/,"");
+  return '<span class="tk-sym">'+esc(l)+'</span><span class="tk-dir"> -&gt; </span><span class="tk-sym">'+esc(rClean)+'</span>'+(term?'<span class="tk-dir"> .</span>':"");
+}
+function hlProgram(text, machine){ return String(text||"").split("\n").map(l=>hlLine(l,machine)).join("\n"); }
+function codeWindow(fname, bodyHtml){
+  return '<div class="code-window"><div class="code-titlebar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="code-filename">'+esc(fname)+'</span></div><div class="code-body">'+bodyHtml+'</div></div>';
+}
+
+/* =========================================================
+   RENDER
+   ========================================================= */
+const app = document.getElementById("app");
+function render(){
+  let html = renderTopbar();
+  switch(state.sheet){
+    case "start":   html += renderStart(); break;
+    case "theory":  html += renderTheory(); break;
+    case "test":    html += renderTestSheet(); break;
+    case "turing": case "post": case "markov": html += renderMachineSheet(state.sheet); break;
+    case "results": html += renderResults(); break;
+    default:        html += renderStart();
+  }
+  app.innerHTML = html;
+  bindInputs();
+  saveState();
+  if(scrollTarget){
+    const el = document.getElementById(scrollTarget);
+    if(el) el.scrollIntoView({behavior:"smooth", block:"start"});
+    scrollTarget = null;
+  } else window.scrollTo({top:0, behavior:"smooth"});
+}
+function renderTopbar(){
+  return '<div class="topbar"><div class="brand"><div class="brand-dot" aria-hidden="true"></div><div><div>🤖 Универсальные исполнители</div><div class="brand-meta">'+esc(TEACHER_NAME)+' · информатика · 11 класс</div></div></div><div class="progress-pill" aria-live="polite">⭐ Баллы: '+fmtPts(totalScore())+' / '+TOTAL_MAX+'</div></div>';
+}
+function sheetTabs(){
+  return '<div class="sheet-tabs" role="tablist" aria-label="Листы рабочего листа">'+TABS.map(([k,label])=>{
+    const active = state.sheet===k ? " active" : "";
+    let badge = "";
+    if(["theory","test","turing","post","markov"].includes(k)){
+      const s = sheetScore(k);
+      if(s>0) badge = ' <span class="tab-score">'+fmtPts(s)+'/10</span>';
+    }
+    return '<button class="sheet-tab'+active+'" role="tab" aria-selected="'+(state.sheet===k)+'" data-action="go" data-sheet="'+k+'">'+label+badge+'</button>';
+  }).join("")+'</div>';
+}
+function renderStart(){
+  const hasProgress = Object.keys(state.tasks).some(id=>{ const ts=state.tasks[id]; return ts.attempts>0||ts.solved||ts.gaveUp; }) || state.theoryStep>0;
+  return '<div class="card fade-in"><div class="start-hero"><h1>🤖 Универсальные исполнители</h1><p class="subtitle">Машина Тьюринга · Машина Поста · Алгорифмы Маркова</p><div class="start-meta"><span class="meta-chip">⏱ 4 урока · 160 минут</span><span class="meta-chip">⭐ Максимум: 50 баллов</span><span class="meta-chip">💾 Прогресс сохраняется</span></div></div><h3>План работы</h3><ul class="plan-list"><li><div class="plan-num">📖</div><div class="plan-text"><strong>Теория — 10 слайдов</strong> <small>Урок 1 (~40 мин). На каждом слайде блиц-проверка: 1 балл (с подсказкой — 0,5).</small></div></li><li><div class="plan-num">✅</div><div class="plan-text"><strong>Тест — 10 вопросов</strong> <small>Урок 2 (~25 мин). Максимум 10 баллов.</small></div></li><li><div class="plan-num">🎞</div><div class="plan-text"><strong>Машина Тьюринга</strong> <small>Урок 3 (~40 мин). Эмулятор + 10 заданий, максимум 10 баллов.</small></div></li><li><div class="plan-num">📼</div><div class="plan-text"><strong>Машина Поста</strong> <small>Урок 4 (~20 мин). Эмулятор + 10 заданий, максимум 10 баллов.</small></div></li><li><div class="plan-num">🔤</div><div class="plan-text"><strong>Алгорифмы Маркова</strong> <small>Урок 4 / резерв (~20 мин). Эмулятор + 10 заданий, максимум 10 баллов.</small></div></li><li><div class="plan-num">🏁</div><div class="plan-text"><strong>Итоги</strong> <small>Отчёт на 50 баллов: баллы, подсказки, попытки + кнопка «Сохранить PDF» для сдачи учителю.</small></div></li></ul><p class="muted">💡 Подсказка есть у каждого задания: она не блокирует решение, но уменьшает балл за задание до 0,5. Кнопка «Я сдаюсь» в заданиях 6–10 показывает эталон — за задание 0 баллов.</p><div class="btn-row" style="justify-content:center;"><button class="btn btn-primary" data-action="go" data-sheet="theory">'+(hasProgress?"Продолжить работу ▶":"Начать ▶")+'</button>'+(hasProgress?'<button class="btn btn-secondary" data-action="go" data-sheet="results">🏁 Мои итоги</button>':"")+'</div></div>';
+}
+function renderTheory(){
+  const total = THEORY.length, idx = Math.min(state.theoryStep, total-1);
+  const slide = THEORY[idx];
+  const progress = ((idx+1)/total)*100;
+  return sheetTabs()
+    + '<div class="progress-bar" aria-hidden="true"><div class="progress-fill" style="width:'+progress+'%"></div></div>'
+    + '<p class="muted" style="margin:-12px 0 16px;font-size:13px;">📖 Слайд '+(idx+1)+' из '+total+' · лист «Теория» · баллы: '+fmtPts(sheetScore("theory"))+'/10</p>'
+    + '<div class="theory-block fade-in"><h3>'+slide.emoji+' '+slide.title+'</h3>'+slide.content
+    + '<div class="section-title" style="margin:18px 0 8px;">✅ Блиц-проверка слайда · 1 балл</div>'
+    + taskCard(slide.quiz, idx+1)
+    + '</div>'
+    + '<div class="btn-row" style="justify-content:space-between;"><button class="btn btn-secondary" data-action="theory-prev" '+(idx===0?"disabled":"")+'>← Назад</button>'
+    + (idx < total-1 ? '<button class="btn btn-primary" data-action="theory-next">Далее →</button>' : '<button class="btn btn-primary" data-action="go" data-sheet="test">Перейти к тесту →</button>')
+    + '</div>';
+}
+function renderTestSheet(){
+  return sheetTabs()
+    + '<div class="card fade-in"><h2>✅ Тест по теории</h2><p class="muted">10 вопросов, каждый — 1 балл (с подсказкой — 0,5). После 3 неверных попыток ответ раскрывается, задание блокируется (0 баллов). Решено баллов: '+fmtPts(sheetScore("test"))+' из 10.</p></div>'
+    + TEST_Q.map((t,i)=>taskCard(t,i+1)).join("")
+    + sheetNav("theory","turing");
+}
+function renderMachineSheet(sheet){
+  const cfg = SHEETCFG[sheet], tasks = cfg.tasks;
+  const prev = {turing:"test", post:"turing", markov:"post"}[sheet];
+  const next = {turing:"post", post:"markov", markov:"results"}[sheet];
+  const em = state.emu[sheet];
+  const emuBody =
+      '<label class="emu-label" for="emu-prog">⌨️ Программа</label>'
+    + '<textarea class="program" id="emu-prog" rows="7" spellcheck="false" data-model="emu.program" data-id="'+sheet+'">'+esc(em.program)+'</textarea>'
+    + '<label class="emu-label" for="emu-word">'+(sheet==="markov"?"🔡 Начальное слово":"🎞 Начальная лента (слово)")+'</label>'
+    + '<input type="text" class="text-input" id="emu-word" value="'+esc(em.word)+'" data-model="emu.word" data-id="'+sheet+'" placeholder="'+(sheet==="markov"?"например: abab":"например: 101")+'">'
+    + '<div class="emu-controls"><button class="btn btn-secondary btn-sm" data-action="emu-reset" data-id="'+sheet+'">🔄 Сброс</button><button class="btn btn-secondary btn-sm" data-action="emu-step" data-id="'+sheet+'">👣 Шаг</button><button class="btn btn-primary btn-sm" data-action="emu-run" data-id="'+sheet+'">▶ Пуск</button></div>'
+    + '<div id="emu-viz" aria-live="polite">'+emuVizHtml(sheet)+'</div>';
+  return sheetTabs()
+    + '<div class="card fade-in"><h2>'+cfg.icon+' '+cfg.title+'</h2><p class="muted">'+cfg.desc+' Набрано: '+fmtPts(sheetScore(sheet))+' из 10.</p></div>'
+    + '<details class="card refcard"><summary>📋 Синтаксис и команды — справка</summary>'+REF[sheet]+'</details>'
+    + codeWindow("⚙️ "+cfg.fname+" — эмулятор", emuBody).replace('<div class="code-window"','<div class="code-window" id="emucard"')
+    + '<div class="section-title">🔎 Задания 1–5 · выполните программы</div>'
+    + tasks.slice(0,5).map((t,i)=>taskCard(t,i+1)).join("")
+    + '<div class="section-title">🛠 Задания 6–10 · напишите свои программы</div>'
+    + tasks.slice(5).map((t,i)=>taskCard(t,i+6)).join("")
+    + sheetNav(prev,next);
+}
+function sheetNav(prev,next){
+  const names = {theory:"теории",test:"тесту",turing:"машине Тьюринга",post:"машине Поста",markov:"алгорифмам Маркова",results:"итогам"};
+  return '<div class="btn-row" style="justify-content:space-between;margin-top:24px;"><button class="btn btn-secondary" data-action="go" data-sheet="'+prev+'">← К '+names[prev]+'</button><button class="btn btn-primary" data-action="go" data-sheet="'+next+'">К '+names[next]+' →</button></div>';
+}
+function taskCard(t, num){
+  const ts = getTS(t.id);
+  const disabled = (ts.solved || ts.locked) ? "disabled" : "";
+  let cls = "task";
+  if(ts.solved) cls += " correct"; else if(ts.locked) cls += " incorrect";
+  let h = '<div class="'+cls+'" id="task-'+t.id+'">';
+  h += '<div class="task-top"><div class="task-num">'+(t.kind==="program"?"🛠":"🔎")+' Задание '+num+' · '+esc(t.title||"")+'</div><div class="task-meta">'
+    + (ts.solved ? '<span class="badge-solved">✓ решено · '+fmtPts(taskPoints(t))+' б.</span>' : "")
+    + (ts.gaveUp ? '<span class="badge-solved" style="color:var(--error);background:var(--error-soft);border-color:#f0c4c2;">🏳 эталон · 0 б.</span>' : "")
+    + (ts.hintUsed && !ts.gaveUp ? '<span class="badge-hint">💡 подсказка (0,5 б.)</span>' : "")
+    + '<span class="task-points">1 балл</span>'
+    + '<button class="hint-btn" data-action="hint" data-task="'+t.id+'" aria-expanded="'+(!!ts.hintOpen)+'" title="Подсказка уменьшает балл за задание до 0,5">'+(ts.hintOpen?"Скрыть подсказку":"💡 Подсказка")+'</button>'
+    + '</div></div>';
+  if(t.text) h += '<div class="task-question">'+t.text+'</div>';
+  if(t.question) h += '<div class="task-question">'+esc(t.question)+'</div>';
+  if(ts.hintOpen && t.hint) h += '<div class="hint-box">💡 '+esc(t.hint)+(ts.solved||ts.gaveUp?"":' <em>(подсказка использована → за задание 0,5 балла при верном решении)</em>')+'</div>';
+
+  if(t.kind==="choice"){
+    h += '<div class="options" role="radiogroup" aria-label="Варианты ответа">'+t.options.map((opt,i)=>
+      '<label class="option '+(ts.selected===i?"selected":"")+'"><input type="radio" name="opt-'+t.id+'" value="'+i+'" '+(ts.selected===i?"checked":"")+' '+disabled+' data-model="ts.selected" data-id="'+t.id+'"><span>'+esc(opt)+'</span></label>').join("")+'</div>'
+      + '<div class="btn-row"><button class="btn btn-primary btn-sm" data-action="check" data-task="'+t.id+'" '+disabled+'>Проверить ✔</button></div>';
+  }
+  else if(t.kind==="predict"){
+    const isMarkov = t.machine==="markov";
+    h += codeWindow("program."+t.machine+" · только чтение", '<pre>'+hlProgram(t.program, t.machine)+'</pre>');
+    h += '<p class="muted">'+(isMarkov?"🔡 Начальное слово":"🎞 Начальная лента")+': <code>'+esc(t.word)||"(пусто)";
+    h += '</code>'+(isMarkov?"":" · каретка на первом символе")+(t.machine==="turing"?" · состояние q1":"")+'</p>';
+    h += '<button class="btn btn-secondary btn-sm" data-action="emu-load" data-task="'+t.id+'" style="margin-bottom:4px;">▶ Загрузить в эмулятор</button>';
+    h += '<div class="answer-row"><input type="text" class="text-input" value="'+esc(ts.answer)+'" placeholder="'+(isMarkov?"Итоговое слово":"Итоговая лента, например: 1010")+'" '+disabled+' data-model="ts.answer" data-id="'+t.id+'"><button class="btn btn-primary btn-sm" data-action="check" data-task="'+t.id+'" '+disabled+'>Проверить ✔</button></div>';
+  }
+  else if(t.kind==="program"){
+    h += '<div class="tests-list">🧪 <strong>Тесты:</strong> '+t.tests.map(x=>'«'+(esc(x.in)||"(пусто)")+'» → «'+(esc(x.out)||"(пусто)")+'»').join(" · ")+'</div>';
+    h += codeWindow("solution_"+t.id+"."+t.machine+" · ваша программа",
+        '<textarea class="program" rows="8" spellcheck="false" '+disabled+' data-model="ts.program" data-id="'+t.id+'">'+esc(ts.program||t.template||"")+'</textarea>'
+        + '<div class="btn-row" style="margin-top:10px;"><button class="btn btn-primary btn-sm" data-action="check" data-task="'+t.id+'" '+disabled+'>Проверить ✔</button><button class="btn btn-secondary btn-sm" data-action="emu-debug" data-task="'+t.id+'">🐞 Отладить в эмуляторе</button>'
+        + ((ts.solved||ts.locked) ? "" : '<button class="giveup-btn" data-action="giveup" data-task="'+t.id+'" title="Показать эталонное решение, за задание 0 баллов">Я сдаюсь</button>')
+        + '</div>');
+    if(ts.gaveUp && t.solution){
+      h += '<div class="section-title" style="margin:14px 0 6px;">📜 Эталонное решение</div>'
+        + codeWindow("etalon."+t.machine, '<pre>'+hlProgram(t.solution, t.machine)+'</pre>')
+        + (t.solutionNote ? '<p class="muted">💬 '+esc(t.solutionNote)+'</p>' : "");
+    }
+  }
+  if(ts.feedback){ h += '<div class="feedback '+ts.feedback.type+'">'+esc(ts.feedback.text)+'</div>'; }
+  return h + '</div>';
+}
+/* ---------- визуализация эмулятора ---------- */
+function ensureRuntime(sheet){
+  const em = state.emu[sheet];
+  if(!em.runtime) em.runtime = (sheet==="markov") ? markovInit(em.word) : (sheet==="turing" ? tmInit(em.word) : postInit(em.word));
+  return em.runtime;
+}
+function tapeHtml(cells, head){
+  const ks = Object.keys(cells).map(Number).concat([head]);
+  let lo = Math.min(...ks)-3, hi = Math.max(...ks)+3;
+  if(hi-lo+1 < 11){ const mid = Math.floor((lo+hi)/2); lo = mid-5; hi = mid+5; }
+  let h = '<div class="tape-wrap"><div class="tape">';
+  for(let i=lo;i<=hi;i++){
+    const sym = cells[i] || "_";
+    const isH = i===head;
+    h += '<div class="tape-col"><div class="head-mark" aria-hidden="true">'+(isH?"▼":"")+'</div><div class="tape-cell'+(isH?" head":"")+(sym==="_"?" blank":"")+'">'+esc(sym)+'</div></div>';
+  }
+  return h + "</div></div>";
+}
+function statusChipsHtml(rt, extra){
+  let cls = "status-chip";
+  if(rt.status==="halted") cls += " ok";
+  if(rt.status==="error"||rt.status==="loop") cls += " err";
+  const msg = rt.msg || (rt.status==="ready" ? (rt.steps? "Готово к следующему шагу 👣" : "Готово к работе — нажмите «Шаг» или «Пуск» ▶") : rt.status);
+  return '<div class="emu-status">'+extra+'<span class="'+cls+'">'+esc(msg)+'</span></div>';
+}
+function emuVizHtml(sheet){
+  const em = state.emu[sheet];
+  const rt = ensureRuntime(sheet);
+  if(sheet==="turing"){
+    const p = tmParse(em.program);
+    if(p.errors.length) return statusChipsHtml({status:"error",msg:"Ошибка в программе: "+p.errors[0],steps:0},"");
+    return statusChipsHtml(rt, '<span class="status-chip">Состояние: <strong>'+esc(rt.st)+'</strong></span><span class="status-chip">Шаг: '+rt.steps+'</span>') + tapeHtml(rt.cells, rt.head);
+  }
+  if(sheet==="post"){
+    const p = postParse(em.program);
+    if(p.errors.length) return statusChipsHtml({status:"error",msg:"Ошибка в программе: "+p.errors[0],steps:0},"");
+    const curLine = (rt.status==="ready" && rt.cur<p.items.length) ? ("строка "+p.items[rt.cur].seq) : "—";
+    return statusChipsHtml(rt, '<span class="status-chip">Текущая строка: <strong>'+esc(curLine)+'</strong></span><span class="status-chip">Шаг: '+rt.steps+'</span>') + tapeHtml(rt.cells, rt.head);
+  }
+  const p = markovParse(em.program);
+  if(p.errors.length) return statusChipsHtml({status:"error",msg:"Ошибка в алгорифме: "+p.errors[0],steps:0},"");
+  let h = statusChipsHtml(rt, '<span class="status-chip">Шаг: '+rt.steps+'</span>');
+  h += '<div class="markov-word">'+(rt.word ? esc(rt.word) : '<span class="muted">(пусто)</span>')+'</div>';
+  if(rt.log.length){
+    h += '<div class="logbox">' + rt.log.slice(-8).map(e=>'<div class="logline">шаг '+e.n+' · «'+esc(e.rule)+'»: «'+(esc(e.before)||"∅")+'» → «'+(esc(e.after)||"∅")+'»</div>').join("") + '</div>';
+  }
+  return h;
+}
+function updateEmuViz(sheet){
+  const viz = document.getElementById("emu-viz");
+  if(viz) viz.innerHTML = emuVizHtml(sheet);
+}
+/* ---------- Итоги + печать/PDF ---------- */
+function reportRowsHtml(){
+  const sheets = [["theory","📖 Теория"],["test","✅ Тест"],["turing","🎞 Тьюринг"],["post","📼 Пост"],["markov","🔤 Марков"]];
+  let rows = "";
+  sheets.forEach(([k,name])=>{
+    sheetTasks(k).forEach((t,i)=>{
+      const ts = getTS(t.id);
+      const status = ts.gaveUp ? '🏳 показан эталон' : ts.solved ? '✓ решено' : ts.attempts>0 ? '✗ в процессе' : '— не выполнено';
+      rows += '<tr><td>'+name+'</td><td>'+(i+1)+'</td><td>'+esc(t.title||"")+'</td><td>'+status+'</td><td>'+fmtPts(taskPoints(t))+'</td><td>'+(ts.hintUsed?"да":"нет")+'</td><td>'+ts.attempts+'</td></tr>';
+    });
+  });
+  return rows;
+}
+function printReportHtml(){
+  const today = new Date().toLocaleDateString("ru-RU");
+  const g = gradeInfo();
+  return '<div class="print-only"><h2 style="margin:0 0 6px;">Универсальные исполнители — отчёт о работе</h2>'
+    + '<p style="margin:0 0 2px;font-size:13px;">Ученик(ца): <strong>'+esc(state.studentName || "— не указано —")+'</strong> · Учитель: '+esc(TEACHER_NAME)+' · информатика, 11 класс</p>'
+    + '<p style="margin:0 0 10px;font-size:13px;">Дата: '+today+' · Итог: <strong>'+fmtPts(totalScore())+' из '+TOTAL_MAX+' баллов</strong> · '+esc(g[0])+'</p>'
+    + '<table class="print-table"><thead><tr><th>Лист</th><th>№</th><th>Задание</th><th>Статус</th><th>Баллы</th><th>Подсказка</th><th>Попыток</th></tr></thead><tbody>'+reportRowsHtml()+'</tbody></table></div>';
+}
+function renderResults(){
+  const sheets = [["theory","📖 Теория"],["test","✅ Тест"],["turing","🎞 Машина Тьюринга"],["post","📼 Машина Поста"],["markov","🔤 Алгорифмы Маркова"]];
+  const total = totalScore();
+  const anyWork = ["theory","test","turing","post","markov"].some(s=>sheetTasks(s).some(t=>{ const ts=getTS(t.id); return ts.attempts>0||ts.solved||ts.gaveUp; }));
+  if(!anyWork){
+    return sheetTabs()+'<div class="results-card fade-in"><h2>🏁 Пока нет результатов</h2><p class="muted" style="margin:8px 0 20px;">Изучите теорию и выполните задания — здесь появится сводный отчёт на 50 баллов: баллы по листам, подсказки, попытки и кнопка «Сохранить PDF».</p><div class="btn-row" style="justify-content:center;"><button class="btn btn-primary" data-action="go" data-sheet="theory">📖 Перейти к теории</button><button class="btn btn-secondary" data-action="go" data-sheet="test">✅ Перейти к тесту</button></div></div>';
+  }
+  const g = gradeInfo();
+  const summary = sheets.map(([k,name])=>{
+    const ts = sheetTasks(k);
+    const hints = ts.map((t,i)=>getTS(t.id).hintUsed?(i+1):null).filter(x=>x);
+    const gave = ts.map((t,i)=>getTS(t.id).gaveUp?(i+1):null).filter(x=>x);
+    const attempts = ts.reduce((a,t)=>a+getTS(t.id).attempts,0);
+    return '<div class="summary-row"><span><strong style="color:var(--text)">'+name+'</strong><br><span class="r-note">попыток: '+attempts+(hints.length?' · 💡 задания '+hints.join(", "):' · без подсказок')+(gave.length?' · 🏳 задания '+gave.join(", "):'')+'</span></span><strong>'+fmtPts(sheetScore(k))+' / 10</strong></div>';
+  }).join("");
+  const details = sheets.map(([k,name])=>{
+    const rows = sheetTasks(k).map((t,i)=>{
+      const st = getTS(t.id);
+      const status = st.gaveUp ? '<span class="r-err">🏳 эталон · 0 б.</span>' : st.solved ? '<span class="r-ok">✓ '+fmtPts(taskPoints(t))+' б.</span>' : st.attempts>0 ? '<span class="r-err">✗ в процессе</span>' : '<span class="r-none">— не выполнено</span>';
+      return '<div class="report-line"><span style="min-width:86px;">Задание '+(i+1)+'</span><span style="flex:1;color:var(--text-soft)">'+esc(t.title||t.question||"")+'</span>'+status+'<span class="r-note">попыток: '+st.attempts+(st.hintUsed?" · 💡":"")+'</span></div>';
+    }).join("");
+    return '<details class="report"><summary>'+name+' — '+fmtPts(sheetScore(k))+' из 10 (по заданиям)</summary>'+rows+'</details>';
+  }).join("");
+  return sheetTabs()
+    + '<div class="results-card fade-in">'
+    + '<div class="score-circle"><div class="score-value">'+fmtPts(total)+'</div><div class="score-label">из '+TOTAL_MAX+' баллов</div></div>'
+    + '<div class="grade-text">'+g[0]+'</div><div class="grade-desc">'+g[1]+'</div>'
+    + '<div class="no-print" style="text-align:left;margin:0 0 14px;"><label class="emu-label" style="color:var(--text-muted);" for="std-name">👤 Фамилия, имя (попадёт в PDF-отчёт)</label><input type="text" class="text-input" id="std-name" value="'+esc(state.studentName)+'" placeholder="Например: Иванова Анна" data-model="studentName"></div>'
+    + '<div style="text-align:left;"><div class="section-title" style="margin-top:0;">📊 Результаты по листам</div>'+summary
+    + '<div class="section-title"> Подробный отчёт</div>'+details
+    + '<p class="muted" style="font-size:12.5px;margin-top:10px;">💡 — использована подсказка (задание даёт 0,5 балла). 🏳 — показан эталон (0 баллов).</p></div>'
+    + '<div class="btn-row no-print" style="justify-content:center;margin-top:22px;"><button class="btn btn-primary" data-action="print">🖨 Сохранить PDF</button><button class="btn btn-secondary" data-action="go" data-sheet="test">К заданиям</button><button class="btn btn-secondary" data-action="reset-all">♻️ Сбросить прогресс</button></div>'
+    + '<p class="muted no-print" style="font-size:12.5px;margin-top:12px;">Кнопка «🖨 Сохранить PDF» открывает окно печати — выберите «Сохранить как PDF» и загрузите файл учителю.</p>'
+    + printReportHtml()
+    + '<p class="muted" style="font-size:13px;margin-top:18px;">Учитель: '+esc(TEACHER_NAME)+' · информатика · 11 класс</p></div>';
+}
+
+/* =========================================================
+   HANDLERS
+   ========================================================= */
+function onAction(e){
+  const btn = e.currentTarget, action = btn.dataset.action;
+  if(action==="go"){ state.sheet = btn.dataset.sheet; render(); return; }
+  if(action==="theory-next"){ state.theoryStep = Math.min(state.theoryStep+1, THEORY.length-1); render(); return; }
+  if(action==="theory-prev"){ state.theoryStep = Math.max(state.theoryStep-1, 0); render(); return; }
+  if(action==="hint"){
+    const ts = getTS(btn.dataset.task);
+    ts.hintOpen = !ts.hintOpen;
+    if(ts.hintOpen) ts.hintUsed = true;
+    render(); return;
+  }
+  if(action==="check"){ doCheck(btn.dataset.task); return; }
+  if(action==="giveup"){
+    const ts = getTS(btn.dataset.task);
+    if(ts.solved || ts.locked) return;
+    if(!confirm("Показать эталонное решение? Задание будет оценено в 0 баллов.")) return;
+    ts.gaveUp = true; ts.locked = true; ts.hintOpen = false;
+    ts.feedback = {type:"err", text:"🏳 Показано эталонное решение. Задание: 0 баллов."};
+    render(); return;
+  }
+  if(action==="emu-load"){
+    const t = findTask(btn.dataset.task); if(!t) return;
+    const em = state.emu[t.machine];
+    em.program = t.program; em.word = t.word; em.runtime = null;
+    scrollTarget = "emucard"; render(); return;
+  }
+  if(action==="emu-debug"){
+    const t = findTask(btn.dataset.task); if(!t) return;
+    const ts = getTS(t.id);
+    const em = state.emu[t.machine];
+    em.program = ts.program || t.template || "";
+    em.word = (t.tests && t.tests[0] ? t.tests[0].in : "") || "";
+    em.runtime = null;
+    scrollTarget = "emucard"; render(); return;
+  }
+  if(action==="emu-reset"||action==="emu-step"||action==="emu-run"){
+    const sheet = btn.dataset.id, em = state.emu[sheet];
+    if(action==="emu-reset") em.runtime = null;
+    const rt = ensureRuntime(sheet);
+    if(action!=="emu-reset" && rt.status==="ready"){
+      if(sheet==="turing"){
+        const p = tmParse(em.program);
+        if(p.errors.length){ rt.status="error"; rt.msg="Ошибка в программе: "+p.errors[0]; }
+        else if(action==="emu-step") tmStepOnce(rt, p.cmds); else tmRun(rt, p.cmds, TM_STEP_LIMIT);
+      } else if(sheet==="post"){
+        const p = postParse(em.program);
+        if(p.errors.length){ rt.status="error"; rt.msg="Ошибка в программе: "+p.errors[0]; }
+        else if(action==="emu-step") postStepOnce(rt, p); else postRun(rt, p, POST_STEP_LIMIT);
+      } else {
+        const p = markovParse(em.program);
+        if(p.errors.length){ rt.status="error"; rt.msg="Ошибка в алгорифме: "+p.errors[0]; }
+        else if(action==="emu-step") markovStepOnce(rt, p.rules); else markovRun(rt, p.rules, MARKOV_STEP_LIMIT);
+      }
+    }
+    updateEmuViz(sheet); saveState(); return;
+  }
+  if(action==="print"){ window.print(); return; }
+  if(action==="reset-all"){
+    if(confirm("Сбросить весь прогресс (ответы, программы, баллы, подсказки)? Это действие нельзя отменить.")){
+      try{ localStorage.removeItem(STORE_KEY); }catch(err){}
+      state.sheet="start"; state.theoryStep=0; state.tasks={}; state.studentName="";
+      state.emu.turing = {program:"q1 a b > q1\nq1 b b > q1\nq1 _ _ . q0", word:"abba", runtime:null};
+      state.emu.post = {program:"1: ? 3 2\n2: > 1\n3: 1 .", word:"101", runtime:null};
+      state.emu.markov = {program:"a -> b", word:"abab", runtime:null};
+      render();
+    }
+    return;
+  }
+}
+function doCheck(id){
+  const task = findTask(id); if(!task) return;
+  const ts = getTS(id);
+  if(ts.solved || ts.locked) return;
+  if(task.kind==="choice"){
+    if(ts.selected==null){ ts.feedback={type:"warn",text:"Выберите вариант ответа."}; render(); return; }
+    ts.attempts++;
+    if(ts.selected===task.correct){
+      ts.solved = true;
+      ts.feedback = {type:"ok", text: ts.hintUsed ? "Верно! +0,5 балла (использована подсказка)." : "Верно! +1 балл 🎉"};
+    } else if(ts.attempts>=MAX_ATTEMPTS_REVEAL){
+      ts.locked = true;
+      ts.feedback = {type:"err", text:"Неверно (3 попытки). Правильный ответ: «"+task.options[task.correct]+"». Задание заблокировано: 0 баллов."};
+    } else ts.feedback = {type:"err", text:"Неверно. Попытка "+ts.attempts+" из "+MAX_ATTEMPTS_REVEAL+"."};
+  }
+  else if(task.kind==="predict"){
+    const given = normAns(ts.answer);
+    if(!given){ ts.feedback={type:"warn",text:"Введите ответ (итоговое содержимое ленты / слово)."}; render(); return; }
+    ts.attempts++;
+    if(given===normAns(task.answer)){
+      ts.solved = true;
+      ts.feedback = {type:"ok", text: ts.hintUsed ? "Верно! +0,5 балла (использована подсказка)." : "Верно! +1 балл 🎉"};
+    } else if(ts.attempts>=MAX_ATTEMPTS_REVEAL){
+      ts.locked = true;
+      ts.feedback = {type:"err", text:"Неверно (3 попытки). Правильный ответ: «"+task.answer+"». Задание заблокировано: 0 баллов."};
+    } else ts.feedback = {type:"err", text:"Неверно. Попытка "+ts.attempts+" из "+MAX_ATTEMPTS_REVEAL+". Загрузите программу в эмулятор и выполните её по шагам."};
+  }
+  else if(task.kind==="program"){
+    const prog = ts.program || "";
+    if(!prog.trim()){ ts.feedback={type:"warn",text:"Напишите программу."}; render(); return; }
+    let res;
+    if(task.machine==="turing") res = tmRunTests(prog, task.tests);
+    else if(task.machine==="post") res = postRunTests(prog, task.tests);
+    else res = markovRunTests(prog, task.tests);
+    ts.attempts++;
+    if(res.ok){
+      ts.solved = true;
+      ts.feedback = {type:"ok", text: ts.hintUsed ? "Все тесты пройдены! +0,5 балла (использована подсказка)." : "Все тесты пройдены! +1 балл 🎉"};
+    } else ts.feedback = {type:"err", text:res.msg+" (попытка "+ts.attempts+")"};
+  }
+  render();
+}
+function bindInputs(){
+  document.querySelectorAll("[data-action]").forEach(b=>b.addEventListener("click", onAction));
+  app.querySelectorAll("[data-model]").forEach(el=>{
+    el.addEventListener("input", onModelInput);
+    el.addEventListener("change", onModelInput);
+  });
+}
+function onModelInput(e){
+  const el = e.target, model = el.dataset.model, id = el.dataset.id;
+  if(model==="ts.answer") getTS(id).answer = el.value;
+  else if(model==="ts.program") getTS(id).program = el.value;
+  else if(model==="ts.selected"){
+    getTS(id).selected = +el.value;
+    const wrap = el.closest(".task");
+    if(wrap) wrap.querySelectorAll(".option").forEach(o=>o.classList.remove("selected"));
+    if(el.closest(".option")) el.closest(".option").classList.add("selected");
+  }
+  else if(model==="emu.program"){ state.emu[id].program = el.value; state.emu[id].runtime = null; updateEmuViz(id); }
+  else if(model==="emu.word"){ state.emu[id].word = el.value; state.emu[id].runtime = null; updateEmuViz(id); }
+  else if(model==="studentName") state.studentName = el.value;
+  saveState();
+}
+
+/* =========================================================
+   INIT
+   ========================================================= */
+function init(){ render(); }
+init();
+</script>
+</body>
+</html>
