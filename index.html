@@ -1014,7 +1014,7 @@ function render(){
     const el = document.getElementById(scrollTarget);
     if(el) el.scrollIntoView({behavior:"smooth", block:"start"});
     scrollTarget = null;
-  } else window.scrollTo({top:0, behavior:"smooth"});
+  }
 }
 function renderTopbar(){
   return '<div class="topbar"><div class="brand"><div class="brand-dot" aria-hidden="true"></div><div><div>🤖 Универсальные исполнители</div><div class="brand-meta">'+esc(TEACHER_NAME)+' · информатика · 11 класс</div></div></div><div class="progress-pill" aria-live="polite">⭐ Баллы: '+fmtPts(totalScore())+' / '+TOTAL_MAX+'</div></div>';
@@ -1243,7 +1243,7 @@ function renderResults(){
 function onAction(e){
   const btn = e.currentTarget, action = btn.dataset.action;
   if(action==="go"){ state.sheet = btn.dataset.sheet; render(); return; }
-  if(action==="theory-next"){ state.theoryStep = Math.min(state.theoryStep+1, THEORY.length-1); render(); return; }
+  if(action==="theory-next"){ state.theoryStep = Math.min(state.theoryStep+1, THEORY.length-1); render(); window.scrollTo({top:0, behavior:"smooth"}); return; }
   if(action==="theory-prev"){ state.theoryStep = Math.max(state.theoryStep-1, 0); render(); return; }
   if(action==="hint"){
     const ts = getTS(btn.dataset.task);
